@@ -60,7 +60,6 @@
 
 
 <div class="viewcode-block" id="dglm"><a class="viewcode-back" href="../../pybats.html#pybats.dglm.dglm">[docs]</a><span class="k">class</span> <span class="nc">dglm</span><span class="p">:</span>
-
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">a0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">R0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -76,20 +75,22 @@
                  <span class="n">adapt_factor</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
                  <span class="n">discount_forecast</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A Dynamic Generalized Linear Model (DGLM). Generic Class. Children include Poisson, Bernoulli, and Binomial DGLMs, as well as the Normal DLM.</span>
 <span class="sd">        :param a0: Prior mean vector</span>
 <span class="sd">        :param R0: Prior covariance matrix</span>
 <span class="sd">        :param nregn: Number of regression components</span>
 <span class="sd">        :param ntrend: Number of trend components</span>
+<span class="sd">        :param nhol: Number of holiday components</span>
 <span class="sd">        :param seasPeriods: List of periods of seasonal components</span>
 <span class="sd">        :param seasHarmComponents: List of harmonic components included for each period</span>
 <span class="sd">        :param deltrend: Discount factor on trend components</span>
 <span class="sd">        :param delregn: Discount factor on regression components</span>
 <span class="sd">        :param delhol: Discount factor on holiday components (currently deprecated)</span>
 <span class="sd">        :param delseas: Discount factor on seasonal components</span>
-<span class="sd">        :param interpolate: Whether to use interpolation for conjugate parameters</span>
-<span class="sd">        :param adapt_discount: What method of discount adaption. False = None, &#39;info&#39; = information based,\</span>
-<span class="sd">         &#39;positive-regn&#39; = only discount if regression information is available</span>
-<span class="sd">        :param discount_forecast: Whether to use discounting into the future</span>
+<span class="sd">        :param interpolate: Whether to use interpolation for conjugate parameters (provides a computational speedup)</span>
+<span class="sd">        :param adapt_discount: What method of discount adaption. False = None, &#39;positive-regn&#39; = only discount if regression information is available, &#39;info&#39; = information based,\</span>
+<span class="sd">        :param adapt_factor: If adapt_discount=&#39;info&#39;, then a higher value adapt_factor leads to a quicker adaptation (with less discounting) on overly uncertain parameters</span>
+<span class="sd">        :param discount_forecast: Whether to use discounting when forecasting</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Setting up trend F, G matrices</span>
@@ -135,13 +136,6 @@
             <span class="n">Fseas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
             <span class="n">Gseas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
             <span class="n">nseas</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="c1"># elif len(seasPeriods) == 1:</span>
-        <span class="c1">#     Fseas, Gseas = seascomp(seasPeriods[0], seasHarmComponents[0])</span>
-        <span class="c1">#     nseas = Gseas.shape[0]</span>
-        <span class="c1">#     self.L = createFourierToSeasonalL(seasPeriods[0], seasHarmComponents[0], Fseas, Gseas)</span>
-        <span class="c1">#     self.iseas = list(range(i, i + nseas))</span>
-        <span class="c1">#     i += nseas</span>
-        <span class="c1"># elif len(seasPeriods) &gt; 1:</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">output</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">seascomp</span><span class="p">,</span> <span class="n">seasPeriods</span><span class="p">,</span> <span class="n">seasHarmComponents</span><span class="p">))</span>
             <span class="n">Flist</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">output</span><span class="p">]</span>
