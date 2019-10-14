@@ -164,6 +164,10 @@
                   <span class="n">adapt_discount</span><span class="o">=</span><span class="n">adapt_discount</span><span class="p">,</span>
                   <span class="n">discount_forecast</span> <span class="o">=</span> <span class="n">discount_forecast</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">family</span> <span class="o">==</span> <span class="s2">&quot;poisson&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;rho&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">rho</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;rho&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rho</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="n">mod</span> <span class="o">=</span> <span class="n">pois_dglm</span><span class="p">(</span><span class="n">a0</span><span class="o">=</span><span class="n">a0</span><span class="p">,</span> <span class="n">R0</span><span class="o">=</span><span class="n">R0</span><span class="p">,</span>
                         <span class="n">nregn</span><span class="o">=</span><span class="n">nregn</span><span class="p">,</span>
                         <span class="n">ntrend</span><span class="o">=</span><span class="n">ntrend</span><span class="p">,</span>
@@ -173,7 +177,8 @@
                         <span class="n">deltrend</span><span class="o">=</span><span class="n">deltrend</span><span class="p">,</span> <span class="n">delregn</span><span class="o">=</span><span class="n">delregn</span><span class="p">,</span>
                         <span class="n">delseas</span><span class="o">=</span><span class="n">delseas</span><span class="p">,</span> <span class="n">delhol</span><span class="o">=</span><span class="n">delhol</span><span class="p">,</span>
                         <span class="n">adapt_discount</span><span class="o">=</span><span class="n">adapt_discount</span><span class="p">,</span>
-                        <span class="n">discount_forecast</span> <span class="o">=</span> <span class="n">discount_forecast</span><span class="p">)</span>
+                        <span class="n">discount_forecast</span> <span class="o">=</span> <span class="n">discount_forecast</span><span class="p">,</span>
+                        <span class="n">rho</span> <span class="o">=</span> <span class="n">rho</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">family</span> <span class="o">==</span> <span class="s2">&quot;bernoulli&quot;</span><span class="p">:</span>
         <span class="n">mod</span> <span class="o">=</span> <span class="n">bern_dglm</span><span class="p">(</span><span class="n">a0</span><span class="o">=</span><span class="n">a0</span><span class="p">,</span> <span class="n">R0</span><span class="o">=</span><span class="n">R0</span><span class="p">,</span>
                         <span class="n">nregn</span><span class="o">=</span><span class="n">nregn</span><span class="p">,</span>
