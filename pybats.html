@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pybats package &#8212; pybats 1.0 documentation</title>
+    <title>pybats package &#8212; pybats 0.0.1 documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.0',
+        VERSION:     '0.0.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pybats 1.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pybats 0.0.1 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -56,7 +56,7 @@
 <span id="pybats-analysis-module"></span><h2>pybats.analysis module<a class="headerlink" href="#module-pybats.analysis" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="pybats.analysis.analysis">
-<code class="descclassname">pybats.analysis.</code><code class="descname">analysis</code><span class="sig-paren">(</span><em>Y, X, k, forecast_start, forecast_end, nsamps=500, mean_only=False, model_prior=None, family='normal', prior_length=20, ntrend=1, dates=None, holidays=[], seasPeriods=[], seasHarmComponents=[], ret=['model', 'forecast'], **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/analysis.html#analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.analysis.analysis" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pybats.analysis.</code><code class="descname">analysis</code><span class="sig-paren">(</span><em>Y, X, k, forecast_start, forecast_end, nsamps=500, family='normal', n=None, model_prior=None, prior_length=20, ntrend=1, dates=None, holidays=[], seasPeriods=[], seasHarmComponents=[], ret=['model', 'forecast'], mean_only=False, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/analysis.html#analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.analysis.analysis" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -67,10 +67,10 @@
 <li><strong>k</strong> &#8211; forecast horizon (how many days ahead to forecast)</li>
 <li><strong>forecast_start</strong> &#8211; date or index value to start forecasting (beginning with 0)</li>
 <li><strong>forecast_end</strong> &#8211; date or index value to end forecasting</li>
+<li><strong>family</strong> &#8211; Exponential family for Y. Options: &#8216;normal&#8217;, &#8216;poisson&#8217;, &#8216;bernoulli&#8217;, or &#8216;binomial&#8217;</li>
 <li><strong>nsamps</strong> &#8211; Number of forecast samples to draw</li>
-<li><strong>mean_only</strong> &#8211; True/False - return the mean only when forecasting, instead of samples?</li>
+<li><strong>n</strong> &#8211; If family is &#8216;binomial&#8217;, this is a (n * 1) array of test size (where Y is the array of successes)</li>
 <li><strong>model_prior</strong> &#8211; A prespecified model of class DGLM</li>
-<li><strong>family</strong> &#8211; Exponential family for Y. Options: &#8216;normal&#8217;, &#8216;poisson&#8217;, &#8216;bernoulli&#8217;</li>
 <li><strong>prior_length</strong> &#8211; If model_prior is not given, a DGLM will be defined using the first &#8216;prior_length&#8217; observations in Y, X.</li>
 <li><strong>ntrend</strong> &#8211; Number of trend components in the model. 1 = local intercept , 2 = local intercept + local level</li>
 <li><strong>dates</strong> &#8211; Array of dates (n * 1)</li>
@@ -78,7 +78,8 @@
 <li><strong>seasPeriods</strong> &#8211; A list of periods for seasonal effects (e.g. [7] for a weekly effect, where Y is daily data)</li>
 <li><strong>seasHarmComponents</strong> &#8211; A list of lists of harmonic components for a seasonal period (e.g. [[1,2,3]] if seasPeriods=[7])</li>
 <li><strong>ret</strong> &#8211; A list of values to return. Options include: [&#8216;model&#8217;, &#8216;forecast, &#8216;model_coef&#8217;]</li>
-<li><strong>kwargs</strong> &#8211; Further key word arguments to define the model prior. Common arguments include discount factors deltrend, delregn, delseas, and delhol</li>
+<li><strong>mean_only</strong> &#8211; True/False - return the mean only when forecasting, instead of samples?</li>
+<li><strong>kwargs</strong> &#8211; Further key word arguments to define the model prior. Common arguments include discount factors deltrend, delregn, delseas, and delhol.</li>
 </ul>
 </td>
 </tr>
@@ -136,15 +137,20 @@
 <dd></dd></dl>
 
 <dl class="function">
+<dt id="pybats.define_models.define_bin_params">
+<code class="descclassname">pybats.define_models.</code><code class="descname">define_bin_params</code><span class="sig-paren">(</span><em>Y</em>, <em>n</em>, <em>X=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/define_models.html#define_bin_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.define_models.define_bin_params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
 <dt id="pybats.define_models.define_dglm">
-<code class="descclassname">pybats.define_models.</code><code class="descname">define_dglm</code><span class="sig-paren">(</span><em>Y, X, family='normal', ntrend=1, nhol=0, seasPeriods=[7], seasHarmComponents=[[1, 2, 3]], deltrend=0.995, delregn=0.995, delseas=0.999, delVar=0.999, delhol=1, n0=1, s0=1, a0=None, R0=None, adapt_discount=False, prior_length=None, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/define_models.html#define_dglm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.define_models.define_dglm" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pybats.define_models.</code><code class="descname">define_dglm</code><span class="sig-paren">(</span><em>Y, X, family='normal', n=None, ntrend=1, nhol=0, seasPeriods=[7], seasHarmComponents=[[1, 2, 3]], deltrend=0.995, delregn=0.995, delseas=0.999, delVar=0.999, delhol=1, n0=1, s0=1, a0=None, R0=None, adapt_discount=False, discount_forecast=False, prior_length=None, return_aR=False, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/define_models.html#define_dglm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.define_models.define_dglm" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>Y</strong> &#8211; Observation array used to define prior</li>
-<li><strong>X</strong> &#8211; Predictor array used to define prior</li>
+<li><strong>X</strong> &#8211; Predictor array used to define prior (includes indicator columns for holidays)</li>
 <li><strong>ntrend</strong> &#8211; Number of trend components. 1 = Intercept only. 2 = Intercept + slope</li>
 <li><strong>nhol</strong> &#8211; Number of holiday components</li>
 <li><strong>seasPeriods</strong> &#8211; List of periods for seasonal components</li>
@@ -159,6 +165,7 @@
 <li><strong>a0</strong> &#8211; Prior state vector mean</li>
 <li><strong>R0</strong> &#8211; Prior state vector covariance</li>
 <li><strong>adapt_discount</strong> &#8211; Optional. Can be &#8216;info&#8217; or &#8216;positive_regn&#8217;. Ways to adapt discount factors, and prevent exploding variance.</li>
+<li><strong>discount_forecast</strong> &#8211; Optional, boolean. Should forecasts be discounted? If yes, variance added to state vector with state evolution equation.</li>
 <li><strong>prior_length</strong> &#8211; Optional, number of rows from Y, X to use. Otherwise all are used</li>
 <li><strong>kwargs</strong> &#8211; </li>
 </ul>
@@ -891,7 +898,7 @@ nu = degrees of freedom</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pybats 1.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pybats 0.0.1 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
