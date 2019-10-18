@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Welcome to pybats’s documentation! &#8212; pybats 0.0.1 documentation</title>
+    <title>PyBATS &#8212; pybats 0.0.1 documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="PyBATS" href="includeme.html" /> 
+    <link rel="next" title="&lt;no title&gt;" href="includeme.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -40,7 +40,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="includeme.html" title="PyBATS"
+          <a href="includeme.html" title="&lt;no title&gt;"
              accesskey="N">next</a> |</li>
         <li class="nav-item nav-item-0"><a href="#">pybats 0.0.1 documentation</a> &#187;</li> 
       </ul>
@@ -51,17 +51,102 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="welcome-to-pybats-s-documentation">
-<h1>Welcome to pybats&#8217;s documentation!<a class="headerlink" href="#welcome-to-pybats-s-documentation" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="pybats">
+<h1>PyBATS<a class="headerlink" href="#pybats" title="Permalink to this headline">¶</a></h1>
+<p>PyBATS is a package for Bayesian time series modeling and forecasting. It is designed to be flexible, offering many options to customize the model form, prior, and forecast period. The focus of the package is the class Dynamic Generalized Linear Model (&#8216;dglm&#8217;). The supported DGLMs are Poisson, Bernoulli, Normal (a DLM), and Binomial. These models are based upon <em>Bayesian Forecasting and Dynamic Models</em>, by West and Harrison (1997).</p>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>PyBATS is in development, and is currently hosted on <a class="reference external" href="https://github.com/lavinei/pybats">GitHub</a>. You can download and install from there:</p>
+<div class="highlight-guess"><div class="highlight"><pre><span></span>$ git clone git@github.com:lavinei/pybats.git pybats
+$ <span class="nb">cd</span> pybats
+$ sudo python setup.py install
+</pre></div>
+</div>
+</div>
+<div class="section" id="quick-start">
+<h2>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h2>
+<p>This provides the most basic example of Bayesian time series analysis using PyBATS. We&#8217;ll use a public dataset of the sales of a dietary weight control product, along with the advertising spend. These are integer valued counts, which we model with a Poisson Dynamic Generalized Linear Model (DGLM).</p>
+<p>First we load in the data, and take a quick look at the first couples of entries:</p>
+<div class="highlight-guess"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">pybats.shared</span> <span class="kn">import</span> <span class="n">load_sales_example</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">load_sales_example</span><span class="p">()</span>                                 <span class="c1"># Load example sales and advertising data. Source: Abraham &amp; Ledolter (1983)</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Sales</th>
+<th class="head">Advertising</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>15</td>
+<td>12.0</td>
+</tr>
+<tr class="row-odd"><td>16</td>
+<td>20.5</td>
+</tr>
+<tr class="row-even"><td>18</td>
+<td>21.0</td>
+</tr>
+</tbody>
+</table>
+<p>Second, we extract the outcome (<em>Y</em>) and covariate (<em>X</em>) from this dataset. We&#8217;ll set the forecast horizon <em>k=1</em> for this example. We could look at multiple forecast horizons by setting k to a larger value. Then the &#8216;analysis&#8217; function will automatically perform marginal forecasts across horizons <em>1:k</em>.</p>
+<p>Finally, we set the start and end time for forecasting. In this case we specify the start and end date with integers, because there are no dates associated with this dataset.</p>
+<div class="highlight-guess"><div class="highlight"><pre><span></span>Y = data[&#39;Sales&#39;].values
+X = data[&#39;Advertising&#39;].values
+
+k = 1                                                       # Forecast 1 step ahead
+forecast_start = 15                                         # Start forecast at time step 15
+forecast_end = 35                                           # End forecast at time step 35 (final time step)
+</pre></div>
+</div>
+<p>We use the <em>analysis</em> function as a helper to a) define the model b) Run sequential updating (forward filtering) and c) forecasting. By default, it will return samples from the forecast distribution as well as the model after the final observation.</p>
+<div class="highlight-guess"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pybats.analysis</span> <span class="kn">import</span> <span class="n">analysis</span>
+
+<span class="n">mod</span><span class="p">,</span> <span class="n">samples</span> <span class="o">=</span> <span class="n">analysis</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="s2">&quot;poisson&quot;</span><span class="p">,</span>
+<span class="n">forecast_start</span><span class="o">=</span><span class="n">forecast_start</span><span class="p">,</span>    <span class="c1"># First time step to forecast on</span>
+<span class="n">forecast_end</span><span class="o">=</span><span class="n">forecast_end</span><span class="p">,</span>          <span class="c1"># Final time step to forecast on</span>
+<span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span>                              <span class="c1"># Forecast horizon. If k&gt;1, default is to forecast 1:k steps ahead, marginally</span>
+<span class="n">prior_length</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>                     <span class="c1"># How many data point to use in defining prior</span>
+<span class="n">rho</span><span class="o">=.</span><span class="mi">5</span><span class="p">,</span>                           <span class="c1"># Random effect extension, increases variance of Poisson DGLM (see Berry and West, 2019)</span>
+<span class="n">deltrend</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span>                      <span class="c1"># Discount factor on the trend component (intercept)</span>
+<span class="n">delregn</span><span class="o">=</span><span class="mf">0.95</span>                        <span class="c1"># Discount factor on the regression component</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The model has the posterior mean and variance of the state vector stored as <code class="docutils literal"><span class="pre">mod.a</span></code> and <code class="docutils literal"><span class="pre">mod.C</span></code> respectively.  In this example, we are purely interested in the forecasts. We plot the sales, median forecast, and 95% credible interval.</p>
+<div class="highlight-guess"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">pybats.point_forecast</span> <span class="kn">import</span> <span class="n">median</span>
+<span class="kn">from</span> <span class="nn">pybats.plot</span> <span class="kn">import</span> <span class="n">plot_data_forecast</span><span class="p">,</span> <span class="n">ax_style</span>
+
+<span class="n">forecast</span> <span class="o">=</span> <span class="n">median</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>                                  <span class="c1"># Take the median as the point forecast</span>
+
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>                                 <span class="c1"># Plot the 1-step ahead point forecast plus the 95% credible interval</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plot_data_forecast</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">Y</span><span class="p">[</span><span class="n">forecast_start</span><span class="p">:</span><span class="n">forecast_end</span> <span class="o">+</span> <span class="n">k</span><span class="p">],</span> <span class="n">forecast</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span>
+                        <span class="n">dates</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">forecast_start</span><span class="p">,</span> <span class="n">forecast_end</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int&#39;</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">ax_style</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;Sales&#39;</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;Time&#39;</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="p">[</span><span class="n">forecast_start</span><span class="p">,</span> <span class="n">forecast_end</span><span class="p">],</span>
+              <span class="n">legend</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Forecast&#39;</span><span class="p">,</span> <span class="s1">&#39;Sales&#39;</span><span class="p">,</span> <span class="s1">&#39;Credible Interval&#39;</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;./forecast.jpg&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The resulting forecast image is:</p>
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/lavinei/pybats/master/examples/forecast.jpg?token=AFB5IUD5IC6S34A4VJM7MT25VYLZQ"><img alt="forecast" src="https://raw.githubusercontent.com/lavinei/pybats/master/examples/forecast.jpg?token=AFB5IUD5IC6S34A4VJM7MT25VYLZQ" /></a>
+<p>References:</p>
+<ol class="arabic simple">
+<li>Berry, L., West, M., 2018. Bayesian forecasting of many count-valued time series. Submitted for publication. ArXiv:1805.05232</li>
+<li>Berry, L., Helman, P., West, M., 2018. Probabilistic forecasting of heterogeneous consumer transaction-sales time series. Submitted for publication. arXiv:1808.04698</li>
+<li>West, M., Harrison, J., 1997. Bayesian Forecasting and Dynamic Models, 2nd Edition. Springer-Verlag,
+New York, Inc.</li>
+</ol>
+<hr class="docutils" />
 <div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="includeme.html">PyBATS</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="includeme.html#installation">Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="includeme.html#quick-start">Quick Start</a></li>
-</ul>
-</li>
-</ul>
+</div>
 </div>
 </div>
 <div class="section" id="indices-and-tables">
@@ -81,13 +166,17 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Welcome to pybats&#8217;s documentation!</a></li>
+<li><a class="reference internal" href="#">PyBATS</a><ul>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#quick-start">Quick Start</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
 
   <h4>Next topic</h4>
   <p class="topless"><a href="includeme.html"
-                        title="next chapter">PyBATS</a></p>
+                        title="next chapter">&lt;no title&gt;</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -119,7 +208,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="includeme.html" title="PyBATS"
+          <a href="includeme.html" title="&lt;no title&gt;"
              >next</a> |</li>
         <li class="nav-item nav-item-0"><a href="#">pybats 0.0.1 documentation</a> &#187;</li> 
       </ul>
