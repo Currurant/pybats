@@ -143,7 +143,7 @@
 
 <dl class="function">
 <dt id="pybats.define_models.define_dglm">
-<code class="descclassname">pybats.define_models.</code><code class="descname">define_dglm</code><span class="sig-paren">(</span><em>Y, X, family='normal', n=None, ntrend=1, nhol=0, seasPeriods=[7], seasHarmComponents=[[1, 2, 3]], deltrend=0.995, delregn=0.995, delseas=0.999, delVar=0.999, delhol=1, n0=1, s0=1, a0=None, R0=None, adapt_discount=False, discount_forecast=False, prior_length=None, return_aR=False, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/define_models.html#define_dglm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.define_models.define_dglm" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pybats.define_models.</code><code class="descname">define_dglm</code><span class="sig-paren">(</span><em>Y, X, family='normal', n=None, ntrend=1, nhol=0, seasPeriods=[7], seasHarmComponents=[[1, 2, 3]], deltrend=0.995, delregn=0.995, delseas=0.999, delVar=0.999, delhol=1, n0=1, s0=1, a0=None, R0=None, adapt_discount='info', discount_forecast=False, prior_length=None, return_aR=False, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/define_models.html#define_dglm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.define_models.define_dglm" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -344,12 +344,7 @@
 
 <dl class="method">
 <dt id="pybats.dglm.dglm.forecast_path">
-<code class="descname">forecast_path</code><span class="sig-paren">(</span><em>k</em>, <em>X=None</em>, <em>nsamps=1</em>, <em>copula=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#dglm.forecast_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.dglm.forecast_path" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.dglm.forecast_path_copula">
-<code class="descname">forecast_path_copula</code><span class="sig-paren">(</span><em>k</em>, <em>X=None</em>, <em>nsamps=1</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#dglm.forecast_path_copula"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.dglm.forecast_path_copula" title="Permalink to this definition">¶</a></dt>
+<code class="descname">forecast_path</code><span class="sig-paren">(</span><em>k</em>, <em>X=None</em>, <em>nsamps=1</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#dglm.forecast_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.dglm.forecast_path" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -516,20 +511,6 @@
 <dd></dd></dl>
 
 <dl class="function">
-<dt id="pybats.forecast.forecast_joint_copula_density_MC">
-<code class="descclassname">pybats.forecast.</code><code class="descname">forecast_joint_copula_density_MC</code><span class="sig-paren">(</span><em>mod_list</em>, <em>y</em>, <em>lambda_mu</em>, <em>lambda_cov</em>, <em>t_dist=False</em>, <em>nu=9</em>, <em>nsamps=500</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/forecast.html#forecast_joint_copula_density_MC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.forecast.forecast_joint_copula_density_MC" title="Permalink to this definition">¶</a></dt>
-<dd><p>lambda_mu: kx1 Mean vector for forecast mean over t+1:t+k
-lambda_cov: kxk Covariance matrix for the forecast over t+1:t+k</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pybats.forecast.forecast_joint_copula_sim">
-<code class="descclassname">pybats.forecast.</code><code class="descname">forecast_joint_copula_sim</code><span class="sig-paren">(</span><em>mod_list</em>, <em>lambda_mu</em>, <em>lambda_cov</em>, <em>nsamps</em>, <em>t_dist=False</em>, <em>nu=9</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/forecast.html#forecast_joint_copula_sim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.forecast.forecast_joint_copula_sim" title="Permalink to this definition">¶</a></dt>
-<dd><p>lambda_mu: kx1 Mean vector for forecast mean over t+1:t+k
-lambda_cov: kxk Covariance matrix for the forecast over t+1:t+k</p>
-</dd></dl>
-
-<dl class="function">
 <dt id="pybats.forecast.forecast_marginal">
 <code class="descclassname">pybats.forecast.</code><code class="descname">forecast_marginal</code><span class="sig-paren">(</span><em>mod</em>, <em>k</em>, <em>X=None</em>, <em>nsamps=1</em>, <em>mean_only=False</em>, <em>state_mean_var=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/forecast.html#forecast_marginal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.forecast.forecast_marginal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Forecast function k steps ahead (marginal)</p>
@@ -554,29 +535,6 @@ lambda_cov: kxk Covariance matrix for the forecast over t+1:t+k</p>
 k: steps ahead to forecast
 X: array with k rows for the future regression components
 nsamps: Number of samples to draw from forecast distribution</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pybats.forecast.forecast_path_copula">
-<code class="descclassname">pybats.forecast.</code><code class="descname">forecast_path_copula</code><span class="sig-paren">(</span><em>mod</em>, <em>k</em>, <em>X=None</em>, <em>nsamps=1</em>, <em>t_dist=False</em>, <em>y=None</em>, <em>nu=9</em>, <em>return_cov=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/forecast.html#forecast_path_copula"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.forecast.forecast_path_copula" title="Permalink to this definition">¶</a></dt>
-<dd><p>Forecast function for the k-step path
-k: steps ahead to forecast
-X: array with k rows for the future regression components
-nsamps: Number of samples to draw from forecast distribution</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pybats.forecast.forecast_path_copula_density_MC">
-<code class="descclassname">pybats.forecast.</code><code class="descname">forecast_path_copula_density_MC</code><span class="sig-paren">(</span><em>mod</em>, <em>y</em>, <em>lambda_mu</em>, <em>lambda_cov</em>, <em>t_dist=False</em>, <em>nu=9</em>, <em>nsamps=500</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/forecast.html#forecast_path_copula_density_MC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.forecast.forecast_path_copula_density_MC" title="Permalink to this definition">¶</a></dt>
-<dd><p>lambda_mu: kx1 Mean vector for forecast mean over t+1:t+k
-lambda_cov: kxk Covariance matrix for the forecast over t+1:t+k</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pybats.forecast.forecast_path_copula_sim">
-<code class="descclassname">pybats.forecast.</code><code class="descname">forecast_path_copula_sim</code><span class="sig-paren">(</span><em>mod</em>, <em>k</em>, <em>lambda_mu</em>, <em>lambda_cov</em>, <em>nsamps</em>, <em>t_dist=False</em>, <em>nu=9</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/forecast.html#forecast_path_copula_sim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.forecast.forecast_path_copula_sim" title="Permalink to this definition">¶</a></dt>
-<dd><p>lambda_mu: kx1 Mean vector for forecast mean over t+1:t+k
-lambda_cov: kxk Covariance matrix for the forecast over t+1:t+k</p>
 </dd></dl>
 
 <dl class="function">
@@ -801,6 +759,11 @@ nu = degrees of freedom</p>
 <dl class="function">
 <dt id="pybats.shared.load_sales_example">
 <code class="descclassname">pybats.shared.</code><code class="descname">load_sales_example</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/shared.html#load_sales_example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.shared.load_sales_example" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pybats.shared.load_sales_example2">
+<code class="descclassname">pybats.shared.</code><code class="descname">load_sales_example2</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/shared.html#load_sales_example2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.shared.load_sales_example2" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">

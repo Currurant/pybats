@@ -1,0 +1,438 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Sales Forecasting: In-Depth Example &#8212; pybats 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Examples" href="../examples.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../examples.html" title="Examples"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pybats 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../examples.html" accesskey="U">Examples</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="sales-forecasting-in-depth-example">
+<h1>Sales Forecasting: In-Depth Example<a class="headerlink" href="#sales-forecasting-in-depth-example" title="Permalink to this headline">¶</a></h1>
+<p>In this example we will model a simulated sales dataset. We will use a
+Poisson DGLM:</p>
+<div class="math">
+\[y_t \sim Pois(\mu_t)\]</div>
+<div class="math">
+\[\log(\mu_t) = \lambda_t\]</div>
+<div class="math">
+\[\lambda_t = F_t^{'} \theta_t\]</div>
+<p>Where <span class="math">\(\theta_t\)</span> is the state vector. Our model has the follow
+<em>dynamic</em> components: - Trend: 1 intercept term - Regression: 2
+regression terms for Price and a 0-1 indicator for any sales or
+promotions. - Holidays: 10 holidays are added. These also act as
+regression terms, with a 0-1 indicator for each holiday. - Seasonality:
+A seasonal component with period 7 for the day-of-the-week. For this
+term we use the 3 harmonic components, which means there are 6
+coefficients. We will demonstrate how to translate the coefficients into
+7 values, one for each day of the week</p>
+<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">pandas.tseries.holiday</span> <span class="k">import</span> <span class="n">USFederalHolidayCalendar</span>
+<span class="kn">from</span> <span class="nn">pybats.analysis</span> <span class="k">import</span> <span class="n">analysis</span>
+<span class="kn">from</span> <span class="nn">pybats.point_forecast</span> <span class="k">import</span> <span class="n">median</span>
+<span class="kn">from</span> <span class="nn">pybats.plot</span> <span class="k">import</span> <span class="n">plot_data_forecast</span><span class="p">,</span> <span class="n">ax_style</span><span class="p">,</span> <span class="n">plot_coef</span>
+<span class="kn">from</span> <span class="nn">pybats.shared</span> <span class="k">import</span> <span class="n">load_sales_example2</span>
+</pre></div>
+</div>
+<div class="section" id="load-in-the-data">
+<h2>Load in the data<a class="headerlink" href="#load-in-the-data" title="Permalink to this headline">¶</a></h2>
+<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">load_sales_example2</span><span class="p">()</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span>
+<span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Sales</th>
+      <th>Price</th>
+      <th>Promotion</th>
+    </tr>
+    <tr>
+      <th>Date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2014-06-01</td>
+      <td>6.0</td>
+      <td>-0.03</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>2014-06-02</td>
+      <td>10.0</td>
+      <td>0.14</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>2014-06-03</td>
+      <td>8.0</td>
+      <td>-0.09</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>2014-06-04</td>
+      <td>6.0</td>
+      <td>-0.13</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>2014-06-05</td>
+      <td>10.0</td>
+      <td>-0.05</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+<div class="section" id="run-the-analysis">
+<h2>Run the analysis<a class="headerlink" href="#run-the-analysis" title="Permalink to this headline">¶</a></h2>
+<p>The analysis function is pybats is meant to provide an easy interface
+that will: - Define a model prior - Run an analysis - Return forecast
+results</p>
+<p>We must choose the form of the model we want, and we’ll define the model
+form discussed above. We also have to set a few parameters that specify
+what dates we want to forecast, and what forecast horizon we’re
+considering.</p>
+<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="n">prior_length</span> <span class="o">=</span> <span class="mi">21</span>   <span class="c1"># Number of days of data used to set prior</span>
+<span class="n">k</span> <span class="o">=</span> <span class="mi">7</span>               <span class="c1"># Forecast horizon</span>
+<span class="n">rho</span> <span class="o">=</span> <span class="mf">0.5</span>           <span class="c1"># Random effect discount factor to increase variance of forecast distribution</span>
+<span class="n">forecast_samps</span> <span class="o">=</span> <span class="mi">2000</span>  <span class="c1"># Number of forecast samples to draw</span>
+<span class="n">forecast_start</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="s1">&#39;2017-01-01&#39;</span><span class="p">)</span> <span class="c1"># Date to start forecasting</span>
+<span class="n">forecast_end</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="s1">&#39;2018-05-24&#39;</span><span class="p">)</span>   <span class="c1"># Date to stop forecasting</span>
+</pre></div>
+</div>
+<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="n">mod</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">model_coef</span> <span class="o">=</span> <span class="n">analysis</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">Sales</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">data</span><span class="p">[[</span><span class="s1">&#39;Price&#39;</span><span class="p">,</span> <span class="s1">&#39;Promotion&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                        <span class="n">k</span><span class="p">,</span> <span class="n">forecast_start</span><span class="p">,</span> <span class="n">forecast_end</span><span class="p">,</span> <span class="n">nsamps</span><span class="o">=</span><span class="n">forecast_samps</span><span class="p">,</span>
+                        <span class="n">family</span><span class="o">=</span><span class="s1">&#39;poisson&#39;</span><span class="p">,</span>
+                        <span class="n">seasPeriods</span><span class="o">=</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span> <span class="n">seasHarmComponents</span><span class="o">=</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]],</span>
+                        <span class="n">prior_length</span><span class="o">=</span><span class="n">prior_length</span><span class="p">,</span> <span class="n">dates</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">holidays</span><span class="o">=</span><span class="n">USFederalHolidayCalendar</span><span class="o">.</span><span class="n">rules</span><span class="p">,</span>
+                        <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span>
+                        <span class="n">ret</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="s1">&#39;forecast&#39;</span><span class="p">,</span> <span class="s1">&#39;model_coef&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">beginning</span> <span class="n">forecasting</span>
+</pre></div>
+</div>
+<p>We specified the desired output with the argument ‘ret’. We have: - The
+model, which has been sequentially updated through to the date
+‘forecast_end’. The most interested model component is the posterior
+mean and covariance of the state vector: mod.m, mod.C - The forecast
+samples. Each day in the range forecast_start to forecast_end, the model
+draws forecast samples ‘k’ steps ahead. Therefore samples is of shape
+(forecast_samps * forecast_length * k). - The model coefficients. Not
+part of the default output from the analysis function, but in this case
+we are interested in how the day-of-week effect changes over time, we so
+we have saved the complete history of the state vector. This contains
+the posterior means and variances.</p>
+</div>
+<div class="section" id="plot-the-forecast-results">
+<h2>Plot the forecast results<a class="headerlink" href="#plot-the-forecast-results" title="Permalink to this headline">¶</a></h2>
+<p>Now we’ll plot the forecasts. Let’s start with the 1-step ahead
+forecasts:</p>
+<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="n">data_1step</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">forecast_start</span><span class="p">:</span><span class="n">forecast_end</span><span class="p">]</span>
+<span class="n">samples_1step</span> <span class="o">=</span> <span class="n">samples</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plot_data_forecast</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span>
+                        <span class="n">data_1step</span><span class="o">.</span><span class="n">Sales</span><span class="p">,</span>
+                        <span class="n">median</span><span class="p">(</span><span class="n">samples_1step</span><span class="p">),</span>
+                        <span class="n">samples_1step</span><span class="p">,</span>
+                        <span class="n">data_1step</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+                        <span class="n">credible_interval</span><span class="o">=</span><span class="mi">75</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../_images/output_13_01.png" src="../_images/output_13_01.png" />
+<p>We’re plotting the median forecasts along with the <span class="math">\(75\%\)</span> credible
+intervals. One very clear pattern is the weekly effect, with a weekly
+spike in our forecasts. There’s also a very noticable holiday effect -
+sales are unpredictable on holidays, and our credible intervals become
+very large.</p>
+<p>You’re probably wondering: How accurate are those point forecasts?</p>
+<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pybats.loss_functions</span> <span class="k">import</span> <span class="n">MAD</span><span class="p">,</span> <span class="n">ZAPE</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">MAD</span><span class="p">(</span><span class="n">data_1step</span><span class="o">.</span><span class="n">Sales</span><span class="p">,</span> <span class="n">median</span><span class="p">(</span><span class="n">samples_1step</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ZAPE</span><span class="p">(</span><span class="n">data_1step</span><span class="o">.</span><span class="n">Sales</span><span class="p">,</span> <span class="n">median</span><span class="p">(</span><span class="n">samples_1step</span><span class="p">)))</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mf">2.37328094303</span>
+<span class="mf">37.0121435617</span>
+</pre></div>
+</div>
+<p>The first loss function is the Mean Absolute Deviation (MAD). Note that
+we’re using the median for our point forecast - it turns out that the
+median is the optimal forecast for minimizing the MAD, just as the mean
+is optimal for minimizing the Mean Square Error (MSE).</p>
+<p>The second number is the Zero-Adjusted Absolute Percent Error (ZAPE).
+This is equivalent to the MAPE (Mean Absolute Percent Error), but is
+still defined even when the sales are 0. On days when sales are 0, then
+the ZAPE loss is equal to the forecast. Interpreting this as a percent
+error metric, we’re off by a significant margin - but not bad for noisy
+sales data either! The median is not the optimal forecast to minimize
+ZAPE, but it’s a simple and easy point forecast to obtain.</p>
+<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="n">data_1step</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">forecast_end</span><span class="o">-</span><span class="n">pd</span><span class="o">.</span><span class="n">DateOffset</span><span class="p">(</span><span class="mi">60</span><span class="p">):</span><span class="n">forecast_end</span><span class="p">]</span>
+<span class="n">samples_1step</span> <span class="o">=</span> <span class="n">samples</span><span class="p">[:,</span><span class="o">-</span><span class="mi">61</span><span class="p">:,</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plot_data_forecast</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span>
+                        <span class="n">data_1step</span><span class="o">.</span><span class="n">Sales</span><span class="p">,</span>
+                        <span class="n">median</span><span class="p">(</span><span class="n">samples_1step</span><span class="p">),</span>
+                        <span class="n">samples_1step</span><span class="p">,</span>
+                        <span class="n">data_1step</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+                        <span class="n">credible_interval</span><span class="o">=</span><span class="mi">75</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../_images/output_18_01.png" src="../_images/output_18_01.png" />
+<p>These forecasts look pretty good! Our <span class="math">\(75\%\)</span> credible intervals
+capture the true sales most of the time, as it should. The weekly
+pattern is much more clearly visible here.</p>
+<p>What if we want to monitor the day-of-week effects? It looks like
+they’re changing over time - what days are become more or less popular?
+Well, that’s why we saved the model coefficients, so we can answer
+exactly that question!</p>
+</div>
+<div class="section" id="plotting-the-day-of-week-seasonality">
+<h2>Plotting the day-of-week seasonality<a class="headerlink" href="#plotting-the-day-of-week-seasonality" title="Permalink to this headline">¶</a></h2>
+<p>We start by taking the posterior coefficents and only looking at the 6
+seasonal coefficients, using the ‘mod.iseas’ property to get the indices
+for the seasonal components.</p>
+<p>Then, we transform these harmonic seasonal components into interpretable
+coefficients for the 7 days of the week.</p>
+<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="n">harm_post_mean</span> <span class="o">=</span> <span class="n">coef</span><span class="p">[</span><span class="s1">&#39;m&#39;</span><span class="p">][:,</span><span class="n">mod</span><span class="o">.</span><span class="n">iseas</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+<span class="n">dow_post_mean</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">L</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">@</span> <span class="n">harm_post_mean</span><span class="o">.</span><span class="n">T</span>
+</pre></div>
+</div>
+<p>Next, we’ll align these 7 components with the days of the week, and plot
+the posterior mean of the coefficients over time. Unfortunately, the
+structure of the seasonal components means that even after the
+transformation, the days are rotated. The ‘current’ day will always
+appear first in each row in the matrix, so we’re going to pluck only
+that day.</p>
+<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">order_dow</span><span class="p">(</span><span class="n">seas_eff</span><span class="p">,</span> <span class="n">date</span><span class="p">):</span>
+    <span class="n">day</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="n">dayofweek</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+    <span class="n">out</span><span class="p">[</span><span class="n">day</span><span class="p">]</span> <span class="o">=</span> <span class="n">seas_eff</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="n">dow_post_mean_plot</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">order_dow</span><span class="p">(</span><span class="n">seas_eff</span><span class="p">,</span> <span class="n">date</span><span class="p">)</span> <span class="k">for</span> <span class="n">seas_eff</span><span class="p">,</span> <span class="n">date</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">dow_post_mean</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[:</span><span class="n">forecast_end</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">)])</span>
+<span class="n">dow_post_mean_plot</span> <span class="o">=</span> <span class="n">dow_post_mean_plot</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">to_replace</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;bfill&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="n">days</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Monday&#39;</span><span class="p">,</span> <span class="s1">&#39;Tuesday&#39;</span><span class="p">,</span> <span class="s1">&#39;Wednesday&#39;</span><span class="p">,</span> <span class="s1">&#39;Thursday&#39;</span><span class="p">,</span> <span class="s1">&#39;Friday&#39;</span><span class="p">,</span> <span class="s1">&#39;Saturday&#39;</span><span class="p">,</span> <span class="s1">&#39;Sunday&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plot_coef</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">dow_post_mean_plot</span><span class="p">,</span> <span class="n">dates</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[:</span><span class="n">forecast_end</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="n">days</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../_images/output_28_01.png" src="../_images/output_28_01.png" />
+<p>Okay, now this is interesting! First, we can see it takes a while for
+the model to learn the day-of-week effects. Once they stabilize, we have
+a few clear takeaways: - Saturday and Sunday have the highest sales,
+followed by Friday - Monday through Thursday sales are also very
+similar, with coefficients between -0.1 to -0.2. - These effects in the
+state space are additive on the log scale. Remember the Poisson DGLM has
+a log-link function:</p>
+<div class="math">
+\[\log(\mu_t) = \lambda_t\]</div>
+<div class="math">
+\[\lambda_t = F_t^{'} \theta_t\]</div>
+<p>If we want to interpret these effects in terms of actual sales, we need
+to recognize that they are additive and on the log scale in the state
+space. In terms of the prior mean, the effect is multiplicative. First,
+we can decompose the linear predictor into seasonal and other terms:</p>
+<div class="math">
+\[F_t^{'} \theta_t = F_{seas, t}^{'} \theta_{seas, t} + F_{other, t}^{'} \theta_{other, t}\]</div>
+<p>Then think in terms of the conjugate prior:</p>
+<div class="math">
+\[\mu_t = e^{F_{seas, t}^{'} \theta_{seas, t}} * e^{F_{other, t}^{'} \theta_{other, t}}\]</div>
+<p>The regression vector F_seas is just a 0-1 indicator to pluck out the
+correct day’s seasonal effect. So to interpret each day’s
+<em>multiplicative</em> effect on sales, we take the exponent of the graph
+above:</p>
+<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plot_coef</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">dow_post_mean_plot</span><span class="p">),</span> <span class="n">dates</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[:</span><span class="n">forecast_end</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="n">days</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../_images/output_32_01.png" src="../_images/output_32_01.png" />
+<p>Perfect, this is very clear! A multiplicative seasonal effect of 1 has
+no effect on Sales. Anything larger than 1 boosts sales, and smaller
+than 1 reduces them.</p>
+<p>Saturday and Sunday have around 30-40% higher sales than the average
+day, and Friday has around 10% higher sales. Monday-Thursday all have
+between 10-20% fewer sales than the average day.</p>
+<p>The long term trends look fairly stable, which is natural - shopping
+habits change slowly over time. Part of that also comes from our model
+definition; The discount factor on the seasonality is very close to 1,
+so we discount historical information very slowly. If we believed that
+these trends changed more rapidly over time, we could re-run the
+analysis with a lower discount factor, using the parameter delseas as an
+argument to the analysis function.</p>
+</div>
+<div class="section" id="conclusions">
+<h2>Conclusions<a class="headerlink" href="#conclusions" title="Permalink to this headline">¶</a></h2>
+<p>In this example we’ve used the PyBATS package to complete an analysis of
+simulated sales data. We: - Used the ‘analysis’ function to define a
+Poisson DGLM with the first 21 days of data. It then performed online
+model updating and forecasting, 1-7 days ahead. - Analyzed the 1-day
+ahead forecasts, and defined two error metrics on our point forecasts. -
+Plotted the forecasts, and saw the added uncertainty caused by holidays,
+and the very strong day-of-week effects. - Took a deep-dive into those
+day-of-week effects, plotting their effect on sales.</p>
+<p>There’s plenty more that we could have explored here as well: - Looked
+at forecasts further into the future. How accurate are our 7-day ahead
+forecasts, and are they also well calibrated? - What about other
+components to the state vector. We could example the trend term, which
+in this model is just the intercept. That would reveal underlying
+average sales over time. We could examine the regression coefficients on
+Price and Promotion, or the holiday effects as well. To interpret them,
+we would need to transform from the log scale into the space of the
+conjugate prior, just as we did with the seasonal effects. - Finally, we
+might be interested in forecasting totals over the next week or month.
+This type of forecasting requires drawing joint samples over 1:k days
+into the future, and then taking a sum over each sample from the
+forecast distribution. This is known as <em>path forecasting</em>, and can be
+accomplished with the method path_forecast.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Sales Forecasting: In-Depth Example</a><ul>
+<li><a class="reference internal" href="#load-in-the-data">Load in the data</a></li>
+<li><a class="reference internal" href="#run-the-analysis">Run the analysis</a></li>
+<li><a class="reference internal" href="#plot-the-forecast-results">Plot the forecast results</a></li>
+<li><a class="reference internal" href="#plotting-the-day-of-week-seasonality">Plotting the day-of-week seasonality</a></li>
+<li><a class="reference internal" href="#conclusions">Conclusions</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../examples.html"
+                        title="previous chapter">Examples</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/Poisson_DGLM_In_Depth_Example_rst/Poisson_DGLM_In_Depth_Example.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../examples.html" title="Examples"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pybats 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../examples.html" >Examples</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Isaac Lavine.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>
