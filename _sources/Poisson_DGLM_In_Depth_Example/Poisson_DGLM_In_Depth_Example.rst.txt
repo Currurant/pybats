@@ -230,8 +230,8 @@ You’re probably wondering: How accurate are those point forecasts?
 
 .. parsed-literal::
 
-    2.35658153242
-    36.2635365406
+    2.35559921415
+    36.7385246064
 
 
 The first loss function is the Mean Absolute Deviation (MAD). Note that
@@ -288,7 +288,9 @@ seasonal coefficients, using the ‘mod.iseas’ property to get the indices
 for the seasonal components.
 
 Then, we transform these harmonic seasonal components into interpretable
-coefficients for the 7 days of the week.
+coefficients for the 7 days of the week. For more details on this
+process, look at *Bayesian Forecasting and Dynamic Models* by Harrison
+and West, Chapter 8.
 
 .. code::
 
@@ -321,8 +323,9 @@ that day.
 
 .. code::
 
+    start_day = 200
     fig, ax = plt.subplots(1,1)
-    ax = plot_coef(fig, ax, dow_post_mean_plot, dates=data.loc[:forecast_end].index, legend=days)
+    ax = plot_coef(fig, ax, dow_post_mean_plot.iloc[start_day:], dates=data.iloc[start_day:].loc[:forecast_end].index, legend=days)
 
 .. code::
 
@@ -333,9 +336,7 @@ that day.
 .. image:: output_29_0.png
 
 
-Okay, now this is interesting! First, we can see it takes a while for
-the model to learn the day-of-week effects. Once they stabilize, we have
-a few clear takeaways:
+Okay, now this is interesting! We have a few clear takeaways:
 
 -  Saturday and Sunday have the highest sales, followed by Friday
 -  Monday through Thursday all have very similar sales, with
@@ -367,9 +368,9 @@ above:
 .. code::
 
     fig, ax = plt.subplots(1,1)
-    ax = plot_coef(fig, ax, np.exp(dow_post_mean_plot), dates=data.loc[:forecast_end].index, legend=days)
+    ax = plot_coef(fig, ax, np.exp(dow_post_mean_plot)[start_day:], dates=data.iloc[start_day:].loc[:forecast_end].index, legend=days)
 
-.. code::
+.. code::  
 
     plt.show(fig)
 
