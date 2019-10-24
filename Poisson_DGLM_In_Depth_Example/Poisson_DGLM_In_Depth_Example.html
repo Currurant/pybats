@@ -295,7 +295,7 @@ seasonal coefficients, using the ‘mod.iseas’ property to get the indices
 for the seasonal components.</p>
 <p>Then, we transform these harmonic seasonal components into interpretable
 coefficients for the 7 days of the week.</p>
-<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="n">harm_post_mean</span> <span class="o">=</span> <span class="n">coef</span><span class="p">[</span><span class="s1">&#39;m&#39;</span><span class="p">][:,</span><span class="n">mod</span><span class="o">.</span><span class="n">iseas</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="n">harm_post_mean</span> <span class="o">=</span> <span class="n">model_coef</span><span class="p">[</span><span class="s1">&#39;m&#39;</span><span class="p">][:,</span><span class="n">mod</span><span class="o">.</span><span class="n">iseas</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
 <span class="n">dow_post_mean</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">L</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">@</span> <span class="n">harm_post_mean</span><span class="o">.</span><span class="n">T</span>
 </pre></div>
 </div>

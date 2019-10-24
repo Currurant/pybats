@@ -292,7 +292,7 @@ coefficients for the 7 days of the week.
 
 .. code::
 
-    harm_post_mean = coef['m'][:,mod.iseas[0]]
+    harm_post_mean = model_coef['m'][:,mod.iseas[0]]
     dow_post_mean = mod.L[0] @ harm_post_mean.T
 
 Next, we’ll align these 7 components with the days of the week, and plot
