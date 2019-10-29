@@ -278,23 +278,30 @@ The state vector prior mean will be the same as the posterior mean. The variance
 </dd></dl>
 
 </div>
-<div class="section" id="module-pybats.forecast">
-<span id="pybats-forecast-module"></span><h2>pybats.forecast module<a class="headerlink" href="#module-pybats.forecast" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pybats.loss_functions">
+<span id="pybats-loss-functions-module"></span><h2>pybats.loss_functions module<a class="headerlink" href="#module-pybats.loss_functions" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
-<dt id="pybats.forecast.forecast_R_cov">
-<code class="descclassname">pybats.forecast.</code><code class="descname">forecast_R_cov</code><span class="sig-paren">(</span><em>mod</em>, <em>k1</em>, <em>k2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/forecast.html#forecast_R_cov"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.forecast.forecast_R_cov" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
+<dt id="pybats.loss_functions.MAD">
+<code class="descclassname">pybats.loss_functions.</code><code class="descname">MAD</code><span class="sig-paren">(</span><em>y</em>, <em>f</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/loss_functions.html#MAD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.loss_functions.MAD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mean absolute deviation (MAD).</p>
+<div class="math">
+\[MAD(y, f) = (1/n) * \sum_{i=1:n} |y_i-f_i|\]</div>
+<p>The optimal point forecast to minimize the MAD is the median.</p>
+<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="n">k</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">MAD</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">forecast_start</span> <span class="o">+</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span><span class="n">forecast_end</span> <span class="o">+</span> <span class="n">k</span><span class="p">],</span> <span class="n">median</span><span class="p">(</span><span class="n">samples</span><span class="p">))</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>mod</strong> &#8211; model</li>
-<li><strong>k1</strong> &#8211; 1st Forecast Horizon (smaller)</li>
-<li><strong>k2</strong> &#8211; 2nd Forecast Horizon (larger)</li>
+<li><strong>y</strong> &#8211; Observation vector</li>
+<li><strong>f</strong> &#8211; Point forecast vector</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">State vector covariance across k1, k2. West &amp; Harrison the covariance is defined as Ct(k,j), pg. 106</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Mean absolute deviation (MAD)</p>
 </td>
 </tr>
 </tbody>
@@ -302,83 +309,60 @@ The state vector prior mean will be the same as the posterior mean. The variance
 </dd></dl>
 
 <dl class="function">
-<dt id="pybats.forecast.forecast_aR">
-<code class="descclassname">pybats.forecast.</code><code class="descname">forecast_aR</code><span class="sig-paren">(</span><em>mod</em>, <em>k</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/forecast.html#forecast_aR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.forecast.forecast_aR" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="pybats.forecast.forecast_marginal">
-<code class="descclassname">pybats.forecast.</code><code class="descname">forecast_marginal</code><span class="sig-paren">(</span><em>mod</em>, <em>k</em>, <em>X=None</em>, <em>nsamps=1</em>, <em>mean_only=False</em>, <em>state_mean_var=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/forecast.html#forecast_marginal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.forecast.forecast_marginal" title="Permalink to this definition">¶</a></dt>
-<dd><p>Forecast function k steps ahead (marginal)</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pybats.forecast.forecast_marginal_bindglm">
-<code class="descclassname">pybats.forecast.</code><code class="descname">forecast_marginal_bindglm</code><span class="sig-paren">(</span><em>mod</em>, <em>n</em>, <em>k</em>, <em>X=None</em>, <em>nsamps=1</em>, <em>mean_only=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/forecast.html#forecast_marginal_bindglm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.forecast.forecast_marginal_bindglm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Forecast function k steps ahead (marginal)</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pybats.forecast.forecast_marginal_density_MC">
-<code class="descclassname">pybats.forecast.</code><code class="descname">forecast_marginal_density_MC</code><span class="sig-paren">(</span><em>mod</em>, <em>k</em>, <em>X=None</em>, <em>nsamps=1</em>, <em>y=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/forecast.html#forecast_marginal_density_MC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.forecast.forecast_marginal_density_MC" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the log forecast density of an observation y</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pybats.forecast.forecast_path">
-<code class="descclassname">pybats.forecast.</code><code class="descname">forecast_path</code><span class="sig-paren">(</span><em>mod</em>, <em>k</em>, <em>X=None</em>, <em>nsamps=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/forecast.html#forecast_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.forecast.forecast_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>Forecast function for the k-step path
-k: steps ahead to forecast
-X: array with k rows for the future regression components
-nsamps: Number of samples to draw from forecast distribution</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pybats.forecast.forecast_path_dlm">
-<code class="descclassname">pybats.forecast.</code><code class="descname">forecast_path_dlm</code><span class="sig-paren">(</span><em>mod</em>, <em>k</em>, <em>X=None</em>, <em>nsamps=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/forecast.html#forecast_path_dlm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.forecast.forecast_path_dlm" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="pybats.forecast.forecast_state_mean_and_var">
-<code class="descclassname">pybats.forecast.</code><code class="descname">forecast_state_mean_and_var</code><span class="sig-paren">(</span><em>mod</em>, <em>k=1</em>, <em>X=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/forecast.html#forecast_state_mean_and_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.forecast.forecast_state_mean_and_var" title="Permalink to this definition">¶</a></dt>
-<dd><p>Forecast function that returns the mean and variance of lambda = state vector * predictors</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pybats.forecast.multivariate_t">
-<code class="descclassname">pybats.forecast.</code><code class="descname">multivariate_t</code><span class="sig-paren">(</span><em>mean</em>, <em>scale</em>, <em>nu</em>, <em>nsamps</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/forecast.html#multivariate_t"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.forecast.multivariate_t" title="Permalink to this definition">¶</a></dt>
-<dd><p>mean = mean
-scale = covariance matrix * ((nu-2)/nu)
-nu = degrees of freedom
-nsamps = # of samples to produce</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pybats.forecast.multivariate_t_density">
-<code class="descclassname">pybats.forecast.</code><code class="descname">multivariate_t_density</code><span class="sig-paren">(</span><em>y</em>, <em>mean</em>, <em>scale</em>, <em>nu</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/forecast.html#multivariate_t_density"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.forecast.multivariate_t_density" title="Permalink to this definition">¶</a></dt>
-<dd><p>y = vector of observations
-mean = mean
-scale = covariance matrix * ((nu-2)/nu)
-nu = degrees of freedom</p>
-</dd></dl>
-
-</div>
-<div class="section" id="module-pybats.loss_functions">
-<span id="pybats-loss-functions-module"></span><h2>pybats.loss_functions module<a class="headerlink" href="#module-pybats.loss_functions" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="pybats.loss_functions.MAD">
-<code class="descclassname">pybats.loss_functions.</code><code class="descname">MAD</code><span class="sig-paren">(</span><em>y</em>, <em>f</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/loss_functions.html#MAD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.loss_functions.MAD" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
 <dt id="pybats.loss_functions.MAPE">
 <code class="descclassname">pybats.loss_functions.</code><code class="descname">MAPE</code><span class="sig-paren">(</span><em>y</em>, <em>f</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/loss_functions.html#MAPE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.loss_functions.MAPE" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Mean absolute percent error (MAPE).</p>
+<div class="math">
+\[MAPE(y, f) = (1/n) * \sum_{i=1:n} |y_i-f_i| / y_i\]</div>
+<p>The optimal point forecast to minimize the MAPE is the (-1)-median. However, it is common to use the median point forecast, which is similar.</p>
+<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="n">k</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">MAPE</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">forecast_start</span> <span class="o">+</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span><span class="n">forecast_end</span> <span class="o">+</span> <span class="n">k</span><span class="p">],</span> <span class="n">m_one_median</span><span class="p">(</span><span class="n">samples</span><span class="p">))</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>y</strong> &#8211; Observation vector</li>
+<li><strong>f</strong> &#8211; Point forecast vector</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Mean absolute percent error (MAPE)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="pybats.loss_functions.MSE">
 <code class="descclassname">pybats.loss_functions.</code><code class="descname">MSE</code><span class="sig-paren">(</span><em>y</em>, <em>f</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/loss_functions.html#MSE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.loss_functions.MSE" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Mean squared error (MSE).</p>
+<div class="math">
+\[MSE(y, f) = (1/n) * \sum_{i=1:n} (y_i-f_i)^2\]</div>
+<p>The optimal point forecast to minimize the MSE is the mean.</p>
+<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="n">k</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">MSE</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">forecast_start</span> <span class="o">+</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span><span class="n">forecast_end</span> <span class="o">+</span> <span class="n">k</span><span class="p">],</span> <span class="n">mean</span><span class="p">(</span><span class="n">samples</span><span class="p">))</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>y</strong> &#8211; Observation vector</li>
+<li><strong>f</strong> &#8211; Point forecast vector</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Mean squared error (MSE)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="pybats.loss_functions.WAFE">
@@ -601,44 +585,6 @@ nu = degrees of freedom</p>
 <dd></dd></dl>
 
 </div>
-<div class="section" id="module-pybats.conjugates">
-<span id="pybats-conjugates-module"></span><h2>pybats.conjugates module<a class="headerlink" href="#module-pybats.conjugates" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="pybats.conjugates.beta_approx">
-<code class="descclassname">pybats.conjugates.</code><code class="descname">beta_approx</code><span class="sig-paren">(</span><em>x</em>, <em>ft</em>, <em>qt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/conjugates.html#beta_approx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.conjugates.beta_approx" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="pybats.conjugates.beta_solver">
-<code class="descclassname">pybats.conjugates.</code><code class="descname">beta_solver</code><span class="sig-paren">(</span><em>ft</em>, <em>qt</em>, <em>alpha=1.0</em>, <em>beta=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/conjugates.html#beta_solver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.conjugates.beta_solver" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="pybats.conjugates.conj_params">
-<code class="descclassname">pybats.conjugates.</code><code class="descname">conj_params</code><span class="sig-paren">(</span><em>ft</em>, <em>qt</em>, <em>alpha=1.0</em>, <em>beta=1.0</em>, <em>interp=False</em>, <em>solver_fn=None</em>, <em>interp_fn=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/conjugates.html#conj_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.conjugates.conj_params" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="pybats.conjugates.gamma_alpha_approx">
-<code class="descclassname">pybats.conjugates.</code><code class="descname">gamma_alpha_approx</code><span class="sig-paren">(</span><em>x</em>, <em>qt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/conjugates.html#gamma_alpha_approx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.conjugates.gamma_alpha_approx" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="pybats.conjugates.gamma_approx">
-<code class="descclassname">pybats.conjugates.</code><code class="descname">gamma_approx</code><span class="sig-paren">(</span><em>x</em>, <em>ft</em>, <em>qt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/conjugates.html#gamma_approx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.conjugates.gamma_approx" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="pybats.conjugates.gamma_solver">
-<code class="descclassname">pybats.conjugates.</code><code class="descname">gamma_solver</code><span class="sig-paren">(</span><em>ft</em>, <em>qt</em>, <em>alpha=1.0</em>, <em>beta=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/conjugates.html#gamma_solver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.conjugates.gamma_solver" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="pybats.conjugates.pois_alpha_param">
-<code class="descclassname">pybats.conjugates.</code><code class="descname">pois_alpha_param</code><span class="sig-paren">(</span><em>qt</em>, <em>alpha=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/conjugates.html#pois_alpha_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.conjugates.pois_alpha_param" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</div>
 <div class="section" id="module-pybats">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pybats" title="Permalink to this headline">¶</a></h2>
 </div>
@@ -656,14 +602,12 @@ nu = degrees of freedom</p>
 <li><a class="reference internal" href="#module-pybats.analysis">pybats.analysis module</a></li>
 <li><a class="reference internal" href="#module-pybats.define_models">pybats.define_models module</a></li>
 <li><a class="reference internal" href="#pybats-dglm-module">pybats.dglm module</a></li>
-<li><a class="reference internal" href="#module-pybats.forecast">pybats.forecast module</a></li>
 <li><a class="reference internal" href="#module-pybats.loss_functions">pybats.loss_functions module</a></li>
 <li><a class="reference internal" href="#module-pybats.plot">pybats.plot module</a></li>
 <li><a class="reference internal" href="#module-pybats.point_forecast">pybats.point_forecast module</a></li>
 <li><a class="reference internal" href="#module-pybats.seasonal">pybats.seasonal module</a></li>
 <li><a class="reference internal" href="#module-pybats.shared">pybats.shared module</a></li>
 <li><a class="reference internal" href="#module-pybats.update">pybats.update module</a></li>
-<li><a class="reference internal" href="#module-pybats.conjugates">pybats.conjugates module</a></li>
 <li><a class="reference internal" href="#module-pybats">Module contents</a></li>
 </ul>
 </li>

@@ -24,14 +24,6 @@ pybats\.dglm module
 .. autoclass:: pybats.dglm.dglm
     :members: update, forecast_marginal, forecast_path
     
-    
-pybats\.forecast module
------------------------
-
-.. automodule:: pybats.forecast
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 pybats\.loss\_functions module
 ------------------------------
@@ -81,14 +73,6 @@ pybats\.update module
     :undoc-members:
     :show-inheritance:
     
-pybats\.conjugates module
--------------------------
-
-.. automodule:: pybats.conjugates
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Module contents
 ---------------
 

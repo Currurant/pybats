@@ -53,18 +53,69 @@
 
 
 <div class="viewcode-block" id="MSE"><a class="viewcode-back" href="../../pybats.html#pybats.loss_functions.MSE">[docs]</a><span class="k">def</span> <span class="nf">MSE</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Mean squared error (MSE).</span>
+
+<span class="sd">    .. math:: MSE(y, f) = (1/n) * \sum_{i=1:n} (y_i-f_i)^2</span>
+
+<span class="sd">    The optimal point forecast to minimize the MSE is the mean.</span>
+
+<span class="sd">    .. code::</span>
+
+<span class="sd">        k = 1</span>
+<span class="sd">        MSE(y[forecast_start + k - 1:forecast_end + k], mean(samples))</span>
+
+<span class="sd">    :param y: Observation vector</span>
+<span class="sd">    :param f: Point forecast vector</span>
+<span class="sd">    :return: Mean squared error (MSE)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">y</span> <span class="o">-</span> <span class="n">f</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="MAD"><a class="viewcode-back" href="../../pybats.html#pybats.loss_functions.MAD">[docs]</a><span class="k">def</span> <span class="nf">MAD</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Mean absolute deviation (MAD).</span>
+
+<span class="sd">    .. math:: MAD(y, f) = (1/n) * \sum_{i=1:n} |y_i-f_i|</span>
+
+<span class="sd">    The optimal point forecast to minimize the MAD is the median.</span>
+
+<span class="sd">    .. code::</span>
+
+<span class="sd">        k = 1</span>
+<span class="sd">        MAD(y[forecast_start + k - 1:forecast_end + k], median(samples))</span>
+
+<span class="sd">    :param y: Observation vector</span>
+<span class="sd">    :param f: Point forecast vector</span>
+<span class="sd">    :return: Mean absolute deviation (MAD)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y</span><span class="o">-</span><span class="n">f</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="MAPE"><a class="viewcode-back" href="../../pybats.html#pybats.loss_functions.MAPE">[docs]</a><span class="k">def</span> <span class="nf">MAPE</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Mean absolute percent error (MAPE).</span>
+
+<span class="sd">    .. math:: MAPE(y, f) = (1/n) * \sum_{i=1:n} |y_i-f_i| / y_i</span>
+
+<span class="sd">    The optimal point forecast to minimize the MAPE is the (-1)-median. However, it is common to use the median point forecast, which is similar.</span>
+
+<span class="sd">    .. code::</span>
+
+<span class="sd">        k = 1</span>
+<span class="sd">        MAPE(y[forecast_start + k - 1:forecast_end + k], m_one_median(samples))</span>
+
+<span class="sd">    :param y: Observation vector</span>
+<span class="sd">    :param f: Point forecast vector</span>
+<span class="sd">    :return: Mean absolute percent error (MAPE)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
     <span class="k">return</span> <span class="mi">100</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">y</span> <span class="o">-</span> <span class="n">f</span><span class="p">))</span> <span class="o">/</span> <span class="n">y</span><span class="p">)</span></div>
