@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pybats package &#8212; pybats 0.0.1 documentation</title>
+    <title>PyBATS package &#8212; pybats 0.0.1 documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -48,16 +48,29 @@
           <div class="body" role="main">
             
   <div class="section" id="pybats-package">
-<h1>pybats package<a class="headerlink" href="#pybats-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-</div>
+<h1>PyBATS package<a class="headerlink" href="#pybats-package" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-pybats.analysis">
 <span id="pybats-analysis-module"></span><h2>pybats.analysis module<a class="headerlink" href="#module-pybats.analysis" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="pybats.analysis.analysis">
 <code class="descclassname">pybats.analysis.</code><code class="descname">analysis</code><span class="sig-paren">(</span><em>Y, X, k, forecast_start, forecast_end, nsamps=500, family='normal', n=None, model_prior=None, prior_length=20, ntrend=1, dates=None, holidays=[], seasPeriods=[], seasHarmComponents=[], ret=['model', 'forecast'], mean_only=False, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/analysis.html#analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.analysis.analysis" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
+<dd><p>This is a helpful function to run a standard analysis. The function will:
+1. Automatically initialize a DGLM
+2. Run sequential updating
+3. Forecast at each specified time step</p>
+<p>This function has many arguments to specify the model components. Here&#8217;s a simple example for a Poisson DGLM:</p>
+<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="n">mod</span><span class="p">,</span> <span class="n">samples</span> <span class="o">=</span> <span class="n">analysis</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="s2">&quot;poisson&quot;</span><span class="p">,</span>
+                        <span class="n">forecast_start</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>      <span class="c1"># First time step to forecast on</span>
+                        <span class="n">forecast_end</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>        <span class="c1"># Final time step to forecast on</span>
+                        <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>                    <span class="c1"># Forecast horizon. If k&gt;1, default is to forecast 1:k steps ahead, marginally</span>
+                        <span class="n">prior_length</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>         <span class="c1"># How many data points to use in defining prior</span>
+                        <span class="n">rho</span><span class="o">=.</span><span class="mi">5</span><span class="p">,</span>                 <span class="c1"># Random effect extension, increases variance of Poisson DGLM (see Berry and West, 2019)</span>
+                        <span class="n">deltrend</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span>          <span class="c1"># Discount factor on the trend component (intercept)</span>
+                        <span class="n">delregn</span><span class="o">=</span><span class="mf">0.95</span>            <span class="c1"># Discount factor on the regression component</span>
+                        <span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
@@ -65,7 +78,7 @@
 <li><strong>Y</strong> &#8211; Array of observations (n * 1)</li>
 <li><strong>X</strong> &#8211; Array of covariates (n * p)</li>
 <li><strong>k</strong> &#8211; forecast horizon (how many days ahead to forecast)</li>
-<li><strong>forecast_start</strong> &#8211; date or index value to start forecasting (beginning with 0)</li>
+<li><strong>forecast_start</strong> &#8211; date or index value to start forecasting (beginning with 0).</li>
 <li><strong>forecast_end</strong> &#8211; date or index value to end forecasting</li>
 <li><strong>family</strong> &#8211; Exponential family for Y. Options: &#8216;normal&#8217;, &#8216;poisson&#8217;, &#8216;bernoulli&#8217;, or &#8216;binomial&#8217;</li>
 <li><strong>nsamps</strong> &#8211; Number of forecast samples to draw</li>
@@ -73,7 +86,7 @@
 <li><strong>model_prior</strong> &#8211; A prespecified model of class DGLM</li>
 <li><strong>prior_length</strong> &#8211; If model_prior is not given, a DGLM will be defined using the first &#8216;prior_length&#8217; observations in Y, X.</li>
 <li><strong>ntrend</strong> &#8211; Number of trend components in the model. 1 = local intercept , 2 = local intercept + local level</li>
-<li><strong>dates</strong> &#8211; Array of dates (n * 1)</li>
+<li><strong>dates</strong> &#8211; Array of dates (n * 1). Must be specified if forecast_start and forecast_end are dates.</li>
 <li><strong>holidays</strong> &#8211; List of Holidays to be given a special indicator (from pandas.tseries.holiday)</li>
 <li><strong>seasPeriods</strong> &#8211; A list of periods for seasonal effects (e.g. [7] for a weekly effect, where Y is daily data)</li>
 <li><strong>seasHarmComponents</strong> &#8211; A list of lists of harmonic components for a seasonal period (e.g. [[1,2,3]] if seasPeriods=[7])</li>
@@ -83,50 +96,12 @@
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Default is a list with [model, forecast_samples]. forecast_samples will have dimension (nsamps by forecast_length by k), where forecast_length is the number of time steps between forecast_start and forecast_end. The output can be customized with the &#8216;ret&#8217; parameter, which is a list of values to return.</p>
 </td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
-
-</div>
-<div class="section" id="module-pybats.conjugates">
-<span id="pybats-conjugates-module"></span><h2>pybats.conjugates module<a class="headerlink" href="#module-pybats.conjugates" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="pybats.conjugates.beta_approx">
-<code class="descclassname">pybats.conjugates.</code><code class="descname">beta_approx</code><span class="sig-paren">(</span><em>x</em>, <em>ft</em>, <em>qt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/conjugates.html#beta_approx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.conjugates.beta_approx" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="pybats.conjugates.beta_solver">
-<code class="descclassname">pybats.conjugates.</code><code class="descname">beta_solver</code><span class="sig-paren">(</span><em>ft</em>, <em>qt</em>, <em>alpha=1.0</em>, <em>beta=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/conjugates.html#beta_solver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.conjugates.beta_solver" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="pybats.conjugates.conj_params">
-<code class="descclassname">pybats.conjugates.</code><code class="descname">conj_params</code><span class="sig-paren">(</span><em>ft</em>, <em>qt</em>, <em>alpha=1.0</em>, <em>beta=1.0</em>, <em>interp=False</em>, <em>solver_fn=None</em>, <em>interp_fn=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/conjugates.html#conj_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.conjugates.conj_params" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="pybats.conjugates.gamma_alpha_approx">
-<code class="descclassname">pybats.conjugates.</code><code class="descname">gamma_alpha_approx</code><span class="sig-paren">(</span><em>x</em>, <em>qt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/conjugates.html#gamma_alpha_approx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.conjugates.gamma_alpha_approx" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="pybats.conjugates.gamma_approx">
-<code class="descclassname">pybats.conjugates.</code><code class="descname">gamma_approx</code><span class="sig-paren">(</span><em>x</em>, <em>ft</em>, <em>qt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/conjugates.html#gamma_approx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.conjugates.gamma_approx" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="pybats.conjugates.gamma_solver">
-<code class="descclassname">pybats.conjugates.</code><code class="descname">gamma_solver</code><span class="sig-paren">(</span><em>ft</em>, <em>qt</em>, <em>alpha=1.0</em>, <em>beta=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/conjugates.html#gamma_solver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.conjugates.gamma_solver" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="pybats.conjugates.pois_alpha_param">
-<code class="descclassname">pybats.conjugates.</code><code class="descname">pois_alpha_param</code><span class="sig-paren">(</span><em>qt</em>, <em>alpha=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/conjugates.html#pois_alpha_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.conjugates.pois_alpha_param" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 </div>
 <div class="section" id="module-pybats.define_models">
@@ -199,285 +174,124 @@
 <dd></dd></dl>
 
 </div>
-<div class="section" id="module-pybats.dglm">
-<span id="pybats-dglm-module"></span><h2>pybats.dglm module<a class="headerlink" href="#module-pybats.dglm" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="pybats.dglm.bern_dglm">
-<em class="property">class </em><code class="descclassname">pybats.dglm.</code><code class="descname">bern_dglm</code><span class="sig-paren">(</span><em>a0=None</em>, <em>R0=None</em>, <em>nregn=0</em>, <em>ntrend=0</em>, <em>nhol=0</em>, <em>seasPeriods=[]</em>, <em>seasHarmComponents=[]</em>, <em>deltrend=1</em>, <em>delregn=1</em>, <em>delhol=1</em>, <em>delseas=1</em>, <em>interpolate=True</em>, <em>adapt_discount=False</em>, <em>adapt_factor=0.5</em>, <em>discount_forecast=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#bern_dglm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.bern_dglm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pybats.dglm.dglm" title="pybats.dglm.dglm"><code class="xref py py-class docutils literal"><span class="pre">pybats.dglm.dglm</span></code></a></p>
-<dl class="method">
-<dt id="pybats.dglm.bern_dglm.get_conjugate_params">
-<code class="descname">get_conjugate_params</code><span class="sig-paren">(</span><em>ft</em>, <em>qt</em>, <em>alpha_init</em>, <em>beta_init</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#bern_dglm.get_conjugate_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.bern_dglm.get_conjugate_params" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.bern_dglm.get_mean">
-<code class="descname">get_mean</code><span class="sig-paren">(</span><em>alpha</em>, <em>beta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#bern_dglm.get_mean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.bern_dglm.get_mean" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.bern_dglm.get_mean_and_var">
-<code class="descname">get_mean_and_var</code><span class="sig-paren">(</span><em>F</em>, <em>a</em>, <em>R</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#bern_dglm.get_mean_and_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.bern_dglm.get_mean_and_var" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.bern_dglm.get_prior_var">
-<code class="descname">get_prior_var</code><span class="sig-paren">(</span><em>alpha</em>, <em>beta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#bern_dglm.get_prior_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.bern_dglm.get_prior_var" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.bern_dglm.loglik">
-<code class="descname">loglik</code><span class="sig-paren">(</span><em>y</em>, <em>alpha</em>, <em>beta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#bern_dglm.loglik"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.bern_dglm.loglik" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.bern_dglm.marginal_cdf">
-<code class="descname">marginal_cdf</code><span class="sig-paren">(</span><em>y</em>, <em>alpha</em>, <em>beta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#bern_dglm.marginal_cdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.bern_dglm.marginal_cdf" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.bern_dglm.prior_inverse_cdf">
-<code class="descname">prior_inverse_cdf</code><span class="sig-paren">(</span><em>cdf</em>, <em>alpha</em>, <em>beta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#bern_dglm.prior_inverse_cdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.bern_dglm.prior_inverse_cdf" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.bern_dglm.sampling_density">
-<code class="descname">sampling_density</code><span class="sig-paren">(</span><em>y</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#bern_dglm.sampling_density"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.bern_dglm.sampling_density" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.bern_dglm.simulate">
-<code class="descname">simulate</code><span class="sig-paren">(</span><em>alpha</em>, <em>beta</em>, <em>nsamps</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#bern_dglm.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.bern_dglm.simulate" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.bern_dglm.simulate_from_prior">
-<code class="descname">simulate_from_prior</code><span class="sig-paren">(</span><em>alpha</em>, <em>beta</em>, <em>nsamps</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#bern_dglm.simulate_from_prior"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.bern_dglm.simulate_from_prior" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.bern_dglm.simulate_from_sampling_model">
-<code class="descname">simulate_from_sampling_model</code><span class="sig-paren">(</span><em>p</em>, <em>nsamps</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#bern_dglm.simulate_from_sampling_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.bern_dglm.simulate_from_sampling_model" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.bern_dglm.update_conjugate_params">
-<code class="descname">update_conjugate_params</code><span class="sig-paren">(</span><em>y</em>, <em>alpha</em>, <em>beta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#bern_dglm.update_conjugate_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.bern_dglm.update_conjugate_params" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="pybats.dglm.bin_dglm">
-<em class="property">class </em><code class="descclassname">pybats.dglm.</code><code class="descname">bin_dglm</code><span class="sig-paren">(</span><em>a0=None</em>, <em>R0=None</em>, <em>nregn=0</em>, <em>ntrend=0</em>, <em>nhol=0</em>, <em>seasPeriods=[]</em>, <em>seasHarmComponents=[]</em>, <em>deltrend=1</em>, <em>delregn=1</em>, <em>delhol=1</em>, <em>delseas=1</em>, <em>interpolate=True</em>, <em>adapt_discount=False</em>, <em>adapt_factor=0.5</em>, <em>discount_forecast=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#bin_dglm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.bin_dglm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pybats.dglm.dglm" title="pybats.dglm.dglm"><code class="xref py py-class docutils literal"><span class="pre">pybats.dglm.dglm</span></code></a></p>
-<dl class="method">
-<dt id="pybats.dglm.bin_dglm.forecast_marginal">
-<code class="descname">forecast_marginal</code><span class="sig-paren">(</span><em>n</em>, <em>k</em>, <em>X=None</em>, <em>nsamps=1</em>, <em>mean_only=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#bin_dglm.forecast_marginal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.bin_dglm.forecast_marginal" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.bin_dglm.get_conjugate_params">
-<code class="descname">get_conjugate_params</code><span class="sig-paren">(</span><em>ft</em>, <em>qt</em>, <em>alpha_init</em>, <em>beta_init</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#bin_dglm.get_conjugate_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.bin_dglm.get_conjugate_params" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.bin_dglm.get_mean">
-<code class="descname">get_mean</code><span class="sig-paren">(</span><em>n</em>, <em>alpha</em>, <em>beta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#bin_dglm.get_mean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.bin_dglm.get_mean" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.bin_dglm.get_prior_var">
-<code class="descname">get_prior_var</code><span class="sig-paren">(</span><em>alpha</em>, <em>beta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#bin_dglm.get_prior_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.bin_dglm.get_prior_var" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.bin_dglm.loglik">
-<code class="descname">loglik</code><span class="sig-paren">(</span><em>data</em>, <em>alpha</em>, <em>beta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#bin_dglm.loglik"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.bin_dglm.loglik" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.bin_dglm.marginal_cdf">
-<code class="descname">marginal_cdf</code><span class="sig-paren">(</span><em>y</em>, <em>n</em>, <em>alpha</em>, <em>beta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#bin_dglm.marginal_cdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.bin_dglm.marginal_cdf" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.bin_dglm.prior_inverse_cdf">
-<code class="descname">prior_inverse_cdf</code><span class="sig-paren">(</span><em>cdf</em>, <em>alpha</em>, <em>beta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#bin_dglm.prior_inverse_cdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.bin_dglm.prior_inverse_cdf" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.bin_dglm.simulate">
-<code class="descname">simulate</code><span class="sig-paren">(</span><em>n</em>, <em>alpha</em>, <em>beta</em>, <em>nsamps</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#bin_dglm.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.bin_dglm.simulate" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.bin_dglm.simulate_from_sampling_model">
-<code class="descname">simulate_from_sampling_model</code><span class="sig-paren">(</span><em>n</em>, <em>p</em>, <em>nsamps</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#bin_dglm.simulate_from_sampling_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.bin_dglm.simulate_from_sampling_model" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.bin_dglm.update">
-<code class="descname">update</code><span class="sig-paren">(</span><em>n=None</em>, <em>y=None</em>, <em>X=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#bin_dglm.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.bin_dglm.update" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.bin_dglm.update_conjugate_params">
-<code class="descname">update_conjugate_params</code><span class="sig-paren">(</span><em>n</em>, <em>y</em>, <em>alpha</em>, <em>beta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#bin_dglm.update_conjugate_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.bin_dglm.update_conjugate_params" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<div class="section" id="pybats-dglm-module">
+<h2>pybats.dglm module<a class="headerlink" href="#pybats-dglm-module" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pybats.dglm.dglm">
 <em class="property">class </em><code class="descclassname">pybats.dglm.</code><code class="descname">dglm</code><span class="sig-paren">(</span><em>a0=None</em>, <em>R0=None</em>, <em>nregn=0</em>, <em>ntrend=0</em>, <em>nhol=0</em>, <em>seasPeriods=[]</em>, <em>seasHarmComponents=[]</em>, <em>deltrend=1</em>, <em>delregn=1</em>, <em>delhol=1</em>, <em>delseas=1</em>, <em>interpolate=True</em>, <em>adapt_discount=False</em>, <em>adapt_factor=0.5</em>, <em>discount_forecast=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#dglm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.dglm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<dl class="method">
-<dt id="pybats.dglm.dglm.build_discount_matrix">
-<code class="descname">build_discount_matrix</code><span class="sig-paren">(</span><em>X=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#dglm.build_discount_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.dglm.build_discount_matrix" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<dd><p>Core class of dynamic generalized linear models (DGLMs).</p>
+<p>Children include Poisson, Bernoulli, and Binomial DGLMs, as well as the Normal DLM.</p>
+<p>A Dynamic Generalized Linear Model (DGLM). Generic Class. Children include Poisson, Bernoulli, and Binomial DGLMs, as well as the Normal DLM.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>a0</strong> &#8211; Prior mean vector</li>
+<li><strong>R0</strong> &#8211; Prior covariance matrix</li>
+<li><strong>nregn</strong> &#8211; Number of regression components</li>
+<li><strong>ntrend</strong> &#8211; Number of trend components</li>
+<li><strong>nhol</strong> &#8211; Number of holiday components</li>
+<li><strong>seasPeriods</strong> &#8211; List of periods of seasonal components</li>
+<li><strong>seasHarmComponents</strong> &#8211; List of harmonic components included for each period</li>
+<li><strong>deltrend</strong> &#8211; Discount factor on trend components</li>
+<li><strong>delregn</strong> &#8211; Discount factor on regression components</li>
+<li><strong>delhol</strong> &#8211; Discount factor on holiday components (currently deprecated)</li>
+<li><strong>delseas</strong> &#8211; Discount factor on seasonal components</li>
+<li><strong>interpolate</strong> &#8211; Whether to use interpolation for conjugate parameters (provides a computational speedup)</li>
+<li><strong>adapt_discount</strong> &#8211; What method of discount adaption. False = None, &#8216;positive-regn&#8217; = only discount if regression information is available, &#8216;info&#8217; = information based,        :param adapt_factor: If adapt_discount=&#8217;info&#8217;, then a higher value adapt_factor leads to a quicker adaptation (with less discounting) on overly uncertain parameters</li>
+<li><strong>discount_forecast</strong> &#8211; Whether to use discounting when forecasting</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="pybats.dglm.dglm.forecast_marginal">
 <code class="descname">forecast_marginal</code><span class="sig-paren">(</span><em>k</em>, <em>X=None</em>, <em>nsamps=1</em>, <em>mean_only=False</em>, <em>state_mean_var=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#dglm.forecast_marginal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.dglm.forecast_marginal" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Simulate from the forecast distribution at time <em>t+k</em>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">k</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mod</span><span class="o">.</span><span class="n">forecast_marginal</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">X</span><span class="p">[</span><span class="n">t</span><span class="o">+</span><span class="n">k</span><span class="p">],</span> <span class="n">nsamps</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>k</strong> &#8211; Forecast horizon (forecast at time <em>t+k</em>).</li>
+<li><strong>X</strong> &#8211; Regression variables at time <em>t+k</em></li>
+<li><strong>nsamps</strong> &#8211; Number of samples to simulate from the forecast distribution.</li>
+<li><strong>mean_only</strong> &#8211; Bool. Return the forecast mean only? If True, no simulation is performed.</li>
+<li><strong>state_mean_var</strong> &#8211; Bool. Return the mean and variance of the linear predictor at time <em>t+k</em>? If True, no simulation is performed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Samples from the forecast distribution at time <em>t+k</em></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="pybats.dglm.dglm.forecast_path">
 <code class="descname">forecast_path</code><span class="sig-paren">(</span><em>k</em>, <em>X=None</em>, <em>nsamps=1</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#dglm.forecast_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.dglm.forecast_path" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.dglm.forecast_state_mean_and_var">
-<code class="descname">forecast_state_mean_and_var</code><span class="sig-paren">(</span><em>k</em>, <em>X=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#dglm.forecast_state_mean_and_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.dglm.forecast_state_mean_and_var" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.dglm.get_W">
-<code class="descname">get_W</code><span class="sig-paren">(</span><em>X=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#dglm.get_W"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.dglm.get_W" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.dglm.get_mean_and_var">
-<code class="descname">get_mean_and_var</code><span class="sig-paren">(</span><em>F</em>, <em>a</em>, <em>R</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#dglm.get_mean_and_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.dglm.get_mean_and_var" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Simulate from the path forecast (the joint forecast) distribution from <em>1</em> to <em>k</em> steps ahead.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">k</span> <span class="o">=</span> <span class="mi">7</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mod</span><span class="o">.</span><span class="n">forecast_path</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">X</span><span class="p">[</span><span class="n">t</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">t</span><span class="o">+</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">nsamps</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>k</strong> &#8211; Forecast horizon (forecast from time <em>t+1</em> to <em>t+k</em>)</li>
+<li><strong>X</strong> &#8211; Regression matrix shape <em>k</em> by <em>p</em>. Each row <em>h</em> has the regression variables for time <em>t+h</em>.</li>
+<li><strong>nsamps</strong> &#8211; Number of samples to simulate from the forecast distribution.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Samples from the path (joint) forecast distribution from time <em>t+1</em> through time <em>t+k</em></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="pybats.dglm.dglm.update">
 <code class="descname">update</code><span class="sig-paren">(</span><em>y=None</em>, <em>X=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#dglm.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.dglm.update" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<dd><p>Update the DGLM state vector mean and covariance after observing &#8216;y&#8217;, with covariates &#8216;X&#8217;.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mod</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">t</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="n">t</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Posterior mean and covariance:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">mod</span><span class="o">.</span><span class="n">m</span><span class="p">,</span> <span class="n">mod</span><span class="o">.</span><span class="n">C</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>You can also access the state vector <em>prior</em> mean and variance for the next time step.
+The state vector prior mean will be the same as the posterior mean. The variance will be larger, due to discounting.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">mod</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">mod</span><span class="o">.</span><span class="n">R</span><span class="p">]</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>y</strong> &#8211; Observation</li>
+<li><strong>X</strong> &#8211; Regression variables</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">No output; DGLM state vector is updated.</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
-
-<dl class="class">
-<dt id="pybats.dglm.dlm">
-<em class="property">class </em><code class="descclassname">pybats.dglm.</code><code class="descname">dlm</code><span class="sig-paren">(</span><em>*args</em>, <em>n0=1</em>, <em>s0=1</em>, <em>delVar=1</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#dlm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.dlm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pybats.dglm.dglm" title="pybats.dglm.dglm"><code class="xref py py-class docutils literal"><span class="pre">pybats.dglm.dglm</span></code></a></p>
-<dl class="method">
-<dt id="pybats.dglm.dlm.forecast_path">
-<code class="descname">forecast_path</code><span class="sig-paren">(</span><em>k</em>, <em>X=None</em>, <em>nsamps=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#dlm.forecast_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.dlm.forecast_path" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.dlm.get_conjugate_params">
-<code class="descname">get_conjugate_params</code><span class="sig-paren">(</span><em>ft</em>, <em>qt</em>, <em>mean</em>, <em>var</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#dlm.get_conjugate_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.dlm.get_conjugate_params" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.dlm.get_mean">
-<code class="descname">get_mean</code><span class="sig-paren">(</span><em>ft</em>, <em>qt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#dlm.get_mean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.dlm.get_mean" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.dlm.get_mean_and_var">
-<code class="descname">get_mean_and_var</code><span class="sig-paren">(</span><em>F</em>, <em>a</em>, <em>R</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#dlm.get_mean_and_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.dlm.get_mean_and_var" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.dlm.simulate">
-<code class="descname">simulate</code><span class="sig-paren">(</span><em>mean</em>, <em>var</em>, <em>nsamps</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#dlm.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.dlm.simulate" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.dlm.simulate_from_sampling_model">
-<code class="descname">simulate_from_sampling_model</code><span class="sig-paren">(</span><em>mean</em>, <em>var</em>, <em>nsamps</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#dlm.simulate_from_sampling_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.dlm.simulate_from_sampling_model" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.dlm.update">
-<code class="descname">update</code><span class="sig-paren">(</span><em>y=None</em>, <em>X=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#dlm.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.dlm.update" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="pybats.dglm.pois_dglm">
-<em class="property">class </em><code class="descclassname">pybats.dglm.</code><code class="descname">pois_dglm</code><span class="sig-paren">(</span><em>*args</em>, <em>rho=1</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#pois_dglm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.pois_dglm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pybats.dglm.dglm" title="pybats.dglm.dglm"><code class="xref py py-class docutils literal"><span class="pre">pybats.dglm.dglm</span></code></a></p>
-<dl class="method">
-<dt id="pybats.dglm.pois_dglm.get_conjugate_params">
-<code class="descname">get_conjugate_params</code><span class="sig-paren">(</span><em>ft</em>, <em>qt</em>, <em>alpha_init</em>, <em>beta_init</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#pois_dglm.get_conjugate_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.pois_dglm.get_conjugate_params" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.pois_dglm.get_mean">
-<code class="descname">get_mean</code><span class="sig-paren">(</span><em>alpha</em>, <em>beta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#pois_dglm.get_mean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.pois_dglm.get_mean" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.pois_dglm.get_mean_and_var">
-<code class="descname">get_mean_and_var</code><span class="sig-paren">(</span><em>F</em>, <em>a</em>, <em>R</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#pois_dglm.get_mean_and_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.pois_dglm.get_mean_and_var" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.pois_dglm.get_prior_var">
-<code class="descname">get_prior_var</code><span class="sig-paren">(</span><em>alpha</em>, <em>beta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#pois_dglm.get_prior_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.pois_dglm.get_prior_var" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.pois_dglm.loglik">
-<code class="descname">loglik</code><span class="sig-paren">(</span><em>y</em>, <em>alpha</em>, <em>beta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#pois_dglm.loglik"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.pois_dglm.loglik" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.pois_dglm.marginal_cdf">
-<code class="descname">marginal_cdf</code><span class="sig-paren">(</span><em>y</em>, <em>alpha</em>, <em>beta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#pois_dglm.marginal_cdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.pois_dglm.marginal_cdf" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.pois_dglm.marginal_inverse_cdf">
-<code class="descname">marginal_inverse_cdf</code><span class="sig-paren">(</span><em>cdf</em>, <em>alpha</em>, <em>beta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#pois_dglm.marginal_inverse_cdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.pois_dglm.marginal_inverse_cdf" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.pois_dglm.prior_inverse_cdf">
-<code class="descname">prior_inverse_cdf</code><span class="sig-paren">(</span><em>cdf</em>, <em>alpha</em>, <em>beta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#pois_dglm.prior_inverse_cdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.pois_dglm.prior_inverse_cdf" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.pois_dglm.sampling_density">
-<code class="descname">sampling_density</code><span class="sig-paren">(</span><em>y</em>, <em>mu</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#pois_dglm.sampling_density"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.pois_dglm.sampling_density" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.pois_dglm.simulate">
-<code class="descname">simulate</code><span class="sig-paren">(</span><em>alpha</em>, <em>beta</em>, <em>nsamps</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#pois_dglm.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.pois_dglm.simulate" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.pois_dglm.simulate_from_prior">
-<code class="descname">simulate_from_prior</code><span class="sig-paren">(</span><em>alpha</em>, <em>beta</em>, <em>nsamps</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#pois_dglm.simulate_from_prior"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.pois_dglm.simulate_from_prior" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.pois_dglm.simulate_from_sampling_model">
-<code class="descname">simulate_from_sampling_model</code><span class="sig-paren">(</span><em>rate</em>, <em>nsamps</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#pois_dglm.simulate_from_sampling_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.pois_dglm.simulate_from_sampling_model" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pybats.dglm.pois_dglm.update_conjugate_params">
-<code class="descname">update_conjugate_params</code><span class="sig-paren">(</span><em>y</em>, <em>alpha</em>, <em>beta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/dglm.html#pois_dglm.update_conjugate_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.dglm.pois_dglm.update_conjugate_params" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 </dd></dl>
 
@@ -805,6 +619,44 @@ nu = degrees of freedom</p>
 <dd></dd></dl>
 
 </div>
+<div class="section" id="module-pybats.conjugates">
+<span id="pybats-conjugates-module"></span><h2>pybats.conjugates module<a class="headerlink" href="#module-pybats.conjugates" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="pybats.conjugates.beta_approx">
+<code class="descclassname">pybats.conjugates.</code><code class="descname">beta_approx</code><span class="sig-paren">(</span><em>x</em>, <em>ft</em>, <em>qt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/conjugates.html#beta_approx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.conjugates.beta_approx" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pybats.conjugates.beta_solver">
+<code class="descclassname">pybats.conjugates.</code><code class="descname">beta_solver</code><span class="sig-paren">(</span><em>ft</em>, <em>qt</em>, <em>alpha=1.0</em>, <em>beta=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/conjugates.html#beta_solver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.conjugates.beta_solver" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pybats.conjugates.conj_params">
+<code class="descclassname">pybats.conjugates.</code><code class="descname">conj_params</code><span class="sig-paren">(</span><em>ft</em>, <em>qt</em>, <em>alpha=1.0</em>, <em>beta=1.0</em>, <em>interp=False</em>, <em>solver_fn=None</em>, <em>interp_fn=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/conjugates.html#conj_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.conjugates.conj_params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pybats.conjugates.gamma_alpha_approx">
+<code class="descclassname">pybats.conjugates.</code><code class="descname">gamma_alpha_approx</code><span class="sig-paren">(</span><em>x</em>, <em>qt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/conjugates.html#gamma_alpha_approx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.conjugates.gamma_alpha_approx" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pybats.conjugates.gamma_approx">
+<code class="descclassname">pybats.conjugates.</code><code class="descname">gamma_approx</code><span class="sig-paren">(</span><em>x</em>, <em>ft</em>, <em>qt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/conjugates.html#gamma_approx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.conjugates.gamma_approx" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pybats.conjugates.gamma_solver">
+<code class="descclassname">pybats.conjugates.</code><code class="descname">gamma_solver</code><span class="sig-paren">(</span><em>ft</em>, <em>qt</em>, <em>alpha=1.0</em>, <em>beta=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/conjugates.html#gamma_solver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.conjugates.gamma_solver" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pybats.conjugates.pois_alpha_param">
+<code class="descclassname">pybats.conjugates.</code><code class="descname">pois_alpha_param</code><span class="sig-paren">(</span><em>qt</em>, <em>alpha=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/conjugates.html#pois_alpha_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.conjugates.pois_alpha_param" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
 <div class="section" id="module-pybats">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pybats" title="Permalink to this headline">¶</a></h2>
 </div>
@@ -818,12 +670,10 @@ nu = degrees of freedom</p>
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">pybats package</a><ul>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#">PyBATS package</a><ul>
 <li><a class="reference internal" href="#module-pybats.analysis">pybats.analysis module</a></li>
-<li><a class="reference internal" href="#module-pybats.conjugates">pybats.conjugates module</a></li>
 <li><a class="reference internal" href="#module-pybats.define_models">pybats.define_models module</a></li>
-<li><a class="reference internal" href="#module-pybats.dglm">pybats.dglm module</a></li>
+<li><a class="reference internal" href="#pybats-dglm-module">pybats.dglm module</a></li>
 <li><a class="reference internal" href="#module-pybats.forecast">pybats.forecast module</a></li>
 <li><a class="reference internal" href="#module-pybats.loss_functions">pybats.loss_functions module</a></li>
 <li><a class="reference internal" href="#module-pybats.plot">pybats.plot module</a></li>
@@ -831,6 +681,7 @@ nu = degrees of freedom</p>
 <li><a class="reference internal" href="#module-pybats.seasonal">pybats.seasonal module</a></li>
 <li><a class="reference internal" href="#module-pybats.shared">pybats.shared module</a></li>
 <li><a class="reference internal" href="#module-pybats.update">pybats.update module</a></li>
+<li><a class="reference internal" href="#module-pybats.conjugates">pybats.conjugates module</a></li>
 <li><a class="reference internal" href="#module-pybats">Module contents</a></li>
 </ul>
 </li>

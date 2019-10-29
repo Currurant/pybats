@@ -1,21 +1,11 @@
-pybats package
+PyBATS package
 ==============
 
-Submodules
-----------
 
 pybats\.analysis module
 -----------------------
 
 .. automodule:: pybats.analysis
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-pybats\.conjugates module
--------------------------
-
-.. automodule:: pybats.conjugates
     :members:
     :undoc-members:
     :show-inheritance:
@@ -31,11 +21,10 @@ pybats\.define\_models module
 pybats\.dglm module
 -------------------
 
-.. automodule:: pybats.dglm
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
+.. autoclass:: pybats.dglm.dglm
+    :members: update, forecast_marginal, forecast_path
+    
+    
 pybats\.forecast module
 -----------------------
 
@@ -91,7 +80,14 @@ pybats\.update module
     :members:
     :undoc-members:
     :show-inheritance:
+    
+pybats\.conjugates module
+-------------------------
 
+.. automodule:: pybats.conjugates
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 Module contents
 ---------------
@@ -100,3 +96,4 @@ Module contents
     :members:
     :undoc-members:
     :show-inheritance:
+
