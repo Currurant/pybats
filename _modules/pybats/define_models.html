@@ -65,6 +65,22 @@
                 <span class="n">prior_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_aR</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A helper function to define a DGLM.</span>
+
+<span class="sd">    This function is especially useful if you do not know how to specifify a prior mean and variance (a0, R0) for the state vector.</span>
+
+<span class="sd">    .. code::</span>
+
+<span class="sd">        mod = define_dglm(Y, X, family=&#39;poisson&#39;,       # Observation vector Y, regression predictors X, and the exponential family.</span>
+<span class="sd">                          prior_length=21,              # Number of observations to use in defining prior</span>
+<span class="sd">                          ntrend=1,                     # Number of &#39;trend&#39; or polynomial components. 1=intercept (local level). 2=intercept and local slope.</span>
+<span class="sd">                          nhol=0,                       # Number of holiday indicators in the model. These are regression components.</span>
+<span class="sd">                          seasPeriods=[7],              # List of the periods of seasonal components. This includes a seasonal component with period 7, which is typical for day-of-week seasonality.</span>
+<span class="sd">                          seasHarmComponents=[[1,2,3]]  # List of harmonic components for each seasonal component. These components go up to period/2, rounded down. So we include the 1st, 2nd, and 3rd component for a seasonality with period 7.</span>
+<span class="sd">                          )</span>
+
+<span class="sd">    This function is called automatically within &#39;analysis&#39; if a model prior is not specified.</span>
+
 <span class="sd">    :param Y: Observation array used to define prior</span>
 <span class="sd">    :param X: Predictor array used to define prior (includes indicator columns for holidays)</span>
 <span class="sd">    :param ntrend: Number of trend components. 1 = Intercept only. 2 = Intercept + slope</span>
@@ -206,7 +222,7 @@
     <span class="k">return</span> <span class="n">mod</span></div>
 
 
-<div class="viewcode-block" id="define_dlm_params"><a class="viewcode-back" href="../../pybats.html#pybats.define_models.define_dlm_params">[docs]</a><span class="k">def</span> <span class="nf">define_dlm_params</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">define_dlm_params</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
     <span class="n">p</span> <span class="o">=</span> <span class="n">ncol</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
     <span class="n">g</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
@@ -216,10 +232,10 @@
     <span class="n">dlm_mean</span> <span class="o">=</span> <span class="n">linear_mod</span><span class="o">.</span><span class="n">params</span>
     <span class="n">dlm_cov</span> <span class="o">=</span> <span class="n">fill_diag</span><span class="p">((</span><span class="n">g</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">g</span><span class="p">))</span> <span class="o">*</span> <span class="n">linear_mod</span><span class="o">.</span><span class="n">cov_params</span><span class="p">())</span>
 
-    <span class="k">return</span> <span class="n">dlm_mean</span><span class="p">,</span> <span class="n">dlm_cov</span><span class="p">,</span> <span class="n">p</span></div>
+    <span class="k">return</span> <span class="n">dlm_mean</span><span class="p">,</span> <span class="n">dlm_cov</span><span class="p">,</span> <span class="n">p</span>
 
 
-<div class="viewcode-block" id="define_bern_params"><a class="viewcode-back" href="../../pybats.html#pybats.define_models.define_bern_params">[docs]</a><span class="k">def</span> <span class="nf">define_bern_params</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">define_bern_params</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
     <span class="n">p</span> <span class="o">=</span> <span class="n">ncol</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 
@@ -243,10 +259,10 @@
             <span class="n">bern_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
         <span class="n">bern_cov</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">bern_params</span><span class="p">,</span> <span class="n">bern_cov</span><span class="p">,</span> <span class="n">p</span></div>
+    <span class="k">return</span> <span class="n">bern_params</span><span class="p">,</span> <span class="n">bern_cov</span><span class="p">,</span> <span class="n">p</span>
 
 
-<div class="viewcode-block" id="define_bin_params"><a class="viewcode-back" href="../../pybats.html#pybats.define_models.define_bin_params">[docs]</a><span class="k">def</span> <span class="nf">define_bin_params</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">define_bin_params</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="n">n_obs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
     <span class="n">p</span> <span class="o">=</span> <span class="n">ncol</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 
@@ -266,10 +282,10 @@
             <span class="n">bin_params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">n</span><span class="p">)])</span>
         <span class="n">bin_cov</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">bin_params</span><span class="p">,</span> <span class="n">bin_cov</span><span class="p">,</span> <span class="n">p</span></div>
+    <span class="k">return</span> <span class="n">bin_params</span><span class="p">,</span> <span class="n">bin_cov</span><span class="p">,</span> <span class="n">p</span>
 
 
-<div class="viewcode-block" id="define_pois_params"><a class="viewcode-back" href="../../pybats.html#pybats.define_models.define_pois_params">[docs]</a><span class="k">def</span> <span class="nf">define_pois_params</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">define_pois_params</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
     <span class="n">p</span> <span class="o">=</span> <span class="n">ncol</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 
@@ -283,23 +299,23 @@
         <span class="n">pois_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
         <span class="n">pois_cov</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">pois_params</span><span class="p">,</span> <span class="n">pois_cov</span><span class="p">,</span> <span class="n">p</span></div>
+    <span class="k">return</span> <span class="n">pois_params</span><span class="p">,</span> <span class="n">pois_cov</span><span class="p">,</span> <span class="n">p</span>
 
 
-<div class="viewcode-block" id="ncol"><a class="viewcode-back" href="../../pybats.html#pybats.define_models.ncol">[docs]</a><span class="k">def</span> <span class="nf">ncol</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">ncol</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="mi">0</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">return</span> <span class="mi">1</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="fill_diag"><a class="viewcode-back" href="../../pybats.html#pybats.define_models.fill_diag">[docs]</a><span class="k">def</span> <span class="nf">fill_diag</span><span class="p">(</span><span class="n">cov</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">fill_diag</span><span class="p">(</span><span class="n">cov</span><span class="p">):</span>
     <span class="n">diag</span> <span class="o">=</span> <span class="n">cov</span><span class="o">.</span><span class="n">diagonal</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">diag</span><span class="p">[</span><span class="n">diag</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">np</span><span class="o">.</span><span class="n">fill_diagonal</span><span class="p">(</span><span class="n">cov</span><span class="p">,</span> <span class="n">diag</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">cov</span></div>
+    <span class="k">return</span> <span class="n">cov</span>
 </pre></div>
 
           </div>

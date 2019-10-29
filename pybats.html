@@ -63,7 +63,7 @@
                         <span class="n">forecast_start</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>      <span class="c1"># First time step to forecast on</span>
                         <span class="n">forecast_end</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>        <span class="c1"># Final time step to forecast on</span>
                         <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>                    <span class="c1"># Forecast horizon. If k&gt;1, default is to forecast 1:k steps ahead, marginally</span>
-                        <span class="n">prior_length</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>         <span class="c1"># How many data points to use in defining prior</span>
+                        <span class="n">prior_length</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>         <span class="c1"># Number of observations to use in defining prior</span>
                         <span class="n">rho</span><span class="o">=.</span><span class="mi">5</span><span class="p">,</span>                 <span class="c1"># Random effect extension, increases variance of Poisson DGLM (see Berry and West, 2019)</span>
                         <span class="n">deltrend</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span>          <span class="c1"># Discount factor on the trend component (intercept)</span>
                         <span class="n">delregn</span><span class="o">=</span><span class="mf">0.95</span>            <span class="c1"># Discount factor on the regression component</span>
@@ -107,19 +107,21 @@
 <div class="section" id="module-pybats.define_models">
 <span id="pybats-define-models-module"></span><h2>pybats.define_models module<a class="headerlink" href="#module-pybats.define_models" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
-<dt id="pybats.define_models.define_bern_params">
-<code class="descclassname">pybats.define_models.</code><code class="descname">define_bern_params</code><span class="sig-paren">(</span><em>Y</em>, <em>X=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/define_models.html#define_bern_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.define_models.define_bern_params" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="pybats.define_models.define_bin_params">
-<code class="descclassname">pybats.define_models.</code><code class="descname">define_bin_params</code><span class="sig-paren">(</span><em>Y</em>, <em>n</em>, <em>X=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/define_models.html#define_bin_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.define_models.define_bin_params" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
 <dt id="pybats.define_models.define_dglm">
 <code class="descclassname">pybats.define_models.</code><code class="descname">define_dglm</code><span class="sig-paren">(</span><em>Y, X, family='normal', n=None, ntrend=1, nhol=0, seasPeriods=[7], seasHarmComponents=[[1, 2, 3]], deltrend=0.995, delregn=0.995, delseas=0.999, delVar=0.999, delhol=1, n0=1, s0=1, a0=None, R0=None, adapt_discount='info', discount_forecast=False, prior_length=None, return_aR=False, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/define_models.html#define_dglm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.define_models.define_dglm" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
+<dd><p>A helper function to define a DGLM.</p>
+<p>This function is especially useful if you do not know how to specifify a prior mean and variance (a0, R0) for the state vector.</p>
+<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="n">mod</span> <span class="o">=</span> <span class="n">define_dglm</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="s1">&#39;poisson&#39;</span><span class="p">,</span>       <span class="c1"># Observation vector Y, regression predictors X, and the exponential family.</span>
+                  <span class="n">prior_length</span><span class="o">=</span><span class="mi">21</span><span class="p">,</span>              <span class="c1"># Number of observations to use in defining prior</span>
+                  <span class="n">ntrend</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>                     <span class="c1"># Number of &#39;trend&#39; or polynomial components. 1=intercept (local level). 2=intercept and local slope.</span>
+                  <span class="n">nhol</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>                       <span class="c1"># Number of holiday indicators in the model. These are regression components.</span>
+                  <span class="n">seasPeriods</span><span class="o">=</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span>              <span class="c1"># List of the periods of seasonal components. This includes a seasonal component with period 7, which is typical for day-of-week seasonality.</span>
+                  <span class="n">seasHarmComponents</span><span class="o">=</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]]</span>  <span class="c1"># List of harmonic components for each seasonal component. These components go up to period/2, rounded down. So we include the 1st, 2nd, and 3rd component for a seasonality with period 7.</span>
+                  <span class="p">)</span>
+</pre></div>
+</div>
+<p>This function is called automatically within &#8216;analysis&#8217; if a model prior is not specified.</p>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
@@ -152,26 +154,6 @@
 </tbody>
 </table>
 </dd></dl>
-
-<dl class="function">
-<dt id="pybats.define_models.define_dlm_params">
-<code class="descclassname">pybats.define_models.</code><code class="descname">define_dlm_params</code><span class="sig-paren">(</span><em>Y</em>, <em>X=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/define_models.html#define_dlm_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.define_models.define_dlm_params" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="pybats.define_models.define_pois_params">
-<code class="descclassname">pybats.define_models.</code><code class="descname">define_pois_params</code><span class="sig-paren">(</span><em>Y</em>, <em>X=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/define_models.html#define_pois_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.define_models.define_pois_params" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="pybats.define_models.fill_diag">
-<code class="descclassname">pybats.define_models.</code><code class="descname">fill_diag</code><span class="sig-paren">(</span><em>cov</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/define_models.html#fill_diag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.define_models.fill_diag" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="pybats.define_models.ncol">
-<code class="descclassname">pybats.define_models.</code><code class="descname">ncol</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/define_models.html#ncol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.define_models.ncol" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 </div>
 <div class="section" id="pybats-dglm-module">

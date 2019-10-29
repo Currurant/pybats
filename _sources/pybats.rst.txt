@@ -14,7 +14,7 @@ pybats\.define\_models module
 -----------------------------
 
 .. automodule:: pybats.define_models
-    :members:
+    :members: define_dglm
     :undoc-members:
     :show-inheritance:
 
