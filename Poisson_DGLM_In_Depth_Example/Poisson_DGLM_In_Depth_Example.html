@@ -125,33 +125,33 @@ into 7 interpretable values, one for each day of the week.</li>
   <tbody>
     <tr>
       <td>2014-06-01</td>
-      <td>16.0</td>
-      <td>0.10</td>
+      <td>15.0</td>
+      <td>1.11</td>
       <td>0.0</td>
     </tr>
     <tr>
       <td>2014-06-02</td>
-      <td>6.0</td>
-      <td>-0.12</td>
-      <td>1.0</td>
-    </tr>
-    <tr>
-      <td>2014-06-03</td>
-      <td>11.0</td>
-      <td>0.06</td>
-      <td>1.0</td>
-    </tr>
-    <tr>
-      <td>2014-06-04</td>
-      <td>11.0</td>
-      <td>0.09</td>
+      <td>13.0</td>
+      <td>2.19</td>
       <td>0.0</td>
     </tr>
     <tr>
-      <td>2014-06-05</td>
-      <td>18.0</td>
-      <td>0.09</td>
+      <td>2014-06-03</td>
+      <td>6.0</td>
+      <td>0.23</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>2014-06-04</td>
+      <td>2.0</td>
+      <td>-0.05</td>
       <td>1.0</td>
+    </tr>
+    <tr>
+      <td>2014-06-05</td>
+      <td>6.0</td>
+      <td>-0.14</td>
+      <td>0.0</td>
     </tr>
   </tbody>
 </table>
@@ -159,7 +159,7 @@ into 7 interpretable values, one for each day of the week.</li>
 to June 1, 2018.</p>
 <ul class="simple">
 <li>The Price column represents percent change in price from the moving
-average. So it’s centered at 0, and will react when a sale occurs.</li>
+average, so it’s centered at 0.</li>
 <li>Promotion is a 0-1 indicator for a specific sale or promotion on the
 item.</li>
 </ul>
@@ -248,8 +248,8 @@ very large.</p>
 <span class="nb">print</span><span class="p">(</span><span class="n">ZAPE</span><span class="p">(</span><span class="n">data_1step</span><span class="o">.</span><span class="n">Sales</span><span class="p">,</span> <span class="n">median</span><span class="p">(</span><span class="n">samples_1step</span><span class="p">)))</span>
 </pre></div>
 </div>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mf">2.86935166994</span>
-<span class="mf">43.2259680035</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mf">2.72003929273</span>
+<span class="mf">49.3051456543</span>
 </pre></div>
 </div>
 <p>The first loss function is the Mean Absolute Deviation (MAD). Note that
