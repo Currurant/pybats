@@ -56,7 +56,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Mean squared error (MSE).</span>
 
-<span class="sd">    .. math:: MSE(y, f) = (1/n) * \sum_{i=1:n} (y_i-f_i)^2</span>
+<span class="sd">    .. math:: MSE(y, f) = \\frac{1}{n} \sum_{i=1:n} (y_i-f_i)^2</span>
 
 <span class="sd">    The optimal point forecast to minimize the MSE is the mean.</span>
 
@@ -79,7 +79,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Mean absolute deviation (MAD).</span>
 
-<span class="sd">    .. math:: MAD(y, f) = (1/n) * \sum_{i=1:n} |y_i-f_i|</span>
+<span class="sd">    .. math:: MAD(y, f) = \\frac{1}{n} \sum_{i=1:n} |y_i-f_i|</span>
 
 <span class="sd">    The optimal point forecast to minimize the MAD is the median.</span>
 
@@ -102,7 +102,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Mean absolute percent error (MAPE).</span>
 
-<span class="sd">    .. math:: MAPE(y, f) = (1/n) * \sum_{i=1:n} |y_i-f_i| / y_i</span>
+<span class="sd">    .. math:: MAPE(y, f) = \\frac{1}{n} \sum_{i=1:n} |y_i-f_i| / y_i</span>
 
 <span class="sd">    The optimal point forecast to minimize the MAPE is the (-1)-median. However, it is common to use the median point forecast, which is similar.</span>
 
@@ -122,18 +122,71 @@
 
 
 <div class="viewcode-block" id="WAPE"><a class="viewcode-back" href="../../pybats.html#pybats.loss_functions.WAPE">[docs]</a><span class="k">def</span> <span class="nf">WAPE</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Weighted Absolute Percent Error (WAPE).</span>
+
+<span class="sd">    .. math:: WAPE(y, f) =  \\frac{\sum_{i=1:n} |y_i-f_i|}{\sum_{i=1:n} y_i}</span>
+
+<span class="sd">    The weighted absolute percent error solves the issues of division by 0 in the MAPE.</span>
+
+<span class="sd">    The optimal point forecase to minimize the WAPE is the joint (-1)-median.</span>
+
+<span class="sd">    .. code::</span>
+
+<span class="sd">        k = 1</span>
+<span class="sd">        WAPE(y[forecast_start + k - 1:forecast_end + k], joint_m_one_median(samples))</span>
+
+<span class="sd">    :param y: Observation vector</span>
+<span class="sd">    :param f: Point forecast vector</span>
+<span class="sd">    :return: Weighted absolute percent error (WAPE)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
     <span class="k">return</span> <span class="mi">100</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y</span><span class="o">-</span><span class="n">f</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="WAFE"><a class="viewcode-back" href="../../pybats.html#pybats.loss_functions.WAFE">[docs]</a><span class="k">def</span> <span class="nf">WAFE</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Weighted Absolute Forecast Error (WAFE).</span>
+
+<span class="sd">    .. math:: WAFE(y, f) =  \\frac{\sum_{i=1:n} |y_i-f_i|}{\sum_{i=1:n} \\frac{1}{2}(y_i + f_i)}</span>
+
+<span class="sd">    Similar to WAPE, the weighted absolute forecast error solves the issues of division by 0 in the MAPE.</span>
+<span class="sd">    It  balances between the observations (:math:`y_i`) and forecasts (:math:`f_i`) in the denominator.</span>
+
+<span class="sd">    .. code::</span>
+
+<span class="sd">        k = 1</span>
+<span class="sd">        WAFE(y[forecast_start + k - 1:forecast_end + k], median(samples))</span>
+
+<span class="sd">    :param y: Observation vector</span>
+<span class="sd">    :param f: Point forecast vector</span>
+<span class="sd">    :return: Weighted absolute forecast error (WAFE)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
     <span class="k">return</span> <span class="mi">100</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y</span><span class="o">-</span><span class="n">f</span><span class="p">))</span> <span class="o">/</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">f</span><span class="p">))</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ZAPE"><a class="viewcode-back" href="../../pybats.html#pybats.loss_functions.ZAPE">[docs]</a><span class="k">def</span> <span class="nf">ZAPE</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Zero-Adjusted Absolute Percent Error (ZAPE).</span>
+
+<span class="sd">    .. math:: ZAPE(y, f) = \\frac{1}{n} \sum_{i=1:n} I(y_i = 0) * f_i + I(y_i = 1) * |y_i-f_i| / y_i</span>
+
+<span class="sd">    The zero-adjusted absolute percent error is an similar to the MAPE, but sets the loss equal to :math:`f_i` when :math:`y_i=0`, to avoid division by 0.</span>
+
+<span class="sd">    The optimal point forecast for ZAPE requires a simple numerical optimization, and lies between the median and (-1)-median.</span>
+
+<span class="sd">    .. code::</span>
+
+<span class="sd">        k = 1</span>
+<span class="sd">        ZAPE(y[forecast_start + k - 1:forecast_end + k], median(samples))</span>
+
+<span class="sd">    :param y: Observation vector</span>
+<span class="sd">    :param f: Point forecast vector</span>
+<span class="sd">    :return: Zero-Adjusted absolute percent error (ZAPE)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
     <span class="n">nonzeros</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>

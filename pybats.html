@@ -285,7 +285,7 @@ The state vector prior mean will be the same as the posterior mean. The variance
 <code class="descclassname">pybats.loss_functions.</code><code class="descname">MAD</code><span class="sig-paren">(</span><em>y</em>, <em>f</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/loss_functions.html#MAD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.loss_functions.MAD" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mean absolute deviation (MAD).</p>
 <div class="math">
-\[MAD(y, f) = (1/n) * \sum_{i=1:n} |y_i-f_i|\]</div>
+\[MAD(y, f) = \frac{1}{n} \sum_{i=1:n} |y_i-f_i|\]</div>
 <p>The optimal point forecast to minimize the MAD is the median.</p>
 <div class="code highlight-default"><div class="highlight"><pre><span></span><span class="n">k</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="n">MAD</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">forecast_start</span> <span class="o">+</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span><span class="n">forecast_end</span> <span class="o">+</span> <span class="n">k</span><span class="p">],</span> <span class="n">median</span><span class="p">(</span><span class="n">samples</span><span class="p">))</span>
@@ -313,7 +313,7 @@ The state vector prior mean will be the same as the posterior mean. The variance
 <code class="descclassname">pybats.loss_functions.</code><code class="descname">MAPE</code><span class="sig-paren">(</span><em>y</em>, <em>f</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/loss_functions.html#MAPE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.loss_functions.MAPE" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mean absolute percent error (MAPE).</p>
 <div class="math">
-\[MAPE(y, f) = (1/n) * \sum_{i=1:n} |y_i-f_i| / y_i\]</div>
+\[MAPE(y, f) = \frac{1}{n} \sum_{i=1:n} |y_i-f_i| / y_i\]</div>
 <p>The optimal point forecast to minimize the MAPE is the (-1)-median. However, it is common to use the median point forecast, which is similar.</p>
 <div class="code highlight-default"><div class="highlight"><pre><span></span><span class="n">k</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="n">MAPE</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">forecast_start</span> <span class="o">+</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span><span class="n">forecast_end</span> <span class="o">+</span> <span class="n">k</span><span class="p">],</span> <span class="n">m_one_median</span><span class="p">(</span><span class="n">samples</span><span class="p">))</span>
@@ -341,7 +341,7 @@ The state vector prior mean will be the same as the posterior mean. The variance
 <code class="descclassname">pybats.loss_functions.</code><code class="descname">MSE</code><span class="sig-paren">(</span><em>y</em>, <em>f</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/loss_functions.html#MSE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.loss_functions.MSE" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mean squared error (MSE).</p>
 <div class="math">
-\[MSE(y, f) = (1/n) * \sum_{i=1:n} (y_i-f_i)^2\]</div>
+\[MSE(y, f) = \frac{1}{n} \sum_{i=1:n} (y_i-f_i)^2\]</div>
 <p>The optimal point forecast to minimize the MSE is the mean.</p>
 <div class="code highlight-default"><div class="highlight"><pre><span></span><span class="n">k</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="n">MSE</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">forecast_start</span> <span class="o">+</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span><span class="n">forecast_end</span> <span class="o">+</span> <span class="n">k</span><span class="p">],</span> <span class="n">mean</span><span class="p">(</span><span class="n">samples</span><span class="p">))</span>
@@ -367,17 +367,89 @@ The state vector prior mean will be the same as the posterior mean. The variance
 <dl class="function">
 <dt id="pybats.loss_functions.WAFE">
 <code class="descclassname">pybats.loss_functions.</code><code class="descname">WAFE</code><span class="sig-paren">(</span><em>y</em>, <em>f</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/loss_functions.html#WAFE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.loss_functions.WAFE" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Weighted Absolute Forecast Error (WAFE).</p>
+<div class="math">
+\[WAFE(y, f) =  \frac{\sum_{i=1:n} |y_i-f_i|}{\sum_{i=1:n} \frac{1}{2}(y_i + f_i)}\]</div>
+<p>Similar to WAPE, the weighted absolute forecast error solves the issues of division by 0 in the MAPE.
+It  balances between the observations (<span class="math">\(y_i\)</span>) and forecasts (<span class="math">\(f_i\)</span>) in the denominator.</p>
+<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="n">k</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">WAFE</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">forecast_start</span> <span class="o">+</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span><span class="n">forecast_end</span> <span class="o">+</span> <span class="n">k</span><span class="p">],</span> <span class="n">median</span><span class="p">(</span><span class="n">samples</span><span class="p">))</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>y</strong> &#8211; Observation vector</li>
+<li><strong>f</strong> &#8211; Point forecast vector</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Weighted absolute forecast error (WAFE)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="pybats.loss_functions.WAPE">
 <code class="descclassname">pybats.loss_functions.</code><code class="descname">WAPE</code><span class="sig-paren">(</span><em>y</em>, <em>f</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/loss_functions.html#WAPE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.loss_functions.WAPE" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Weighted Absolute Percent Error (WAPE).</p>
+<div class="math">
+\[WAPE(y, f) =  \frac{\sum_{i=1:n} |y_i-f_i|}{\sum_{i=1:n} y_i}\]</div>
+<p>The weighted absolute percent error solves the issues of division by 0 in the MAPE.</p>
+<p>The optimal point forecase to minimize the WAPE is the joint (-1)-median.</p>
+<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="n">k</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">WAPE</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">forecast_start</span> <span class="o">+</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span><span class="n">forecast_end</span> <span class="o">+</span> <span class="n">k</span><span class="p">],</span> <span class="n">joint_m_one_median</span><span class="p">(</span><span class="n">samples</span><span class="p">))</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>y</strong> &#8211; Observation vector</li>
+<li><strong>f</strong> &#8211; Point forecast vector</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Weighted absolute percent error (WAPE)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="pybats.loss_functions.ZAPE">
 <code class="descclassname">pybats.loss_functions.</code><code class="descname">ZAPE</code><span class="sig-paren">(</span><em>y</em>, <em>f</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pybats/loss_functions.html#ZAPE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pybats.loss_functions.ZAPE" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Zero-Adjusted Absolute Percent Error (ZAPE).</p>
+<div class="math">
+\[ZAPE(y, f) = \frac{1}{n} \sum_{i=1:n} I(y_i = 0) * f_i + I(y_i = 1) * |y_i-f_i| / y_i\]</div>
+<p>The zero-adjusted absolute percent error is an similar to the MAPE, but sets the loss equal to <span class="math">\(f_i\)</span> when <span class="math">\(y_i=0\)</span>, to avoid division by 0.</p>
+<p>The optimal point forecast for ZAPE requires a simple numerical optimization, and lies between the median and (-1)-median.</p>
+<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="n">k</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">ZAPE</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">forecast_start</span> <span class="o">+</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span><span class="n">forecast_end</span> <span class="o">+</span> <span class="n">k</span><span class="p">],</span> <span class="n">median</span><span class="p">(</span><span class="n">samples</span><span class="p">))</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>y</strong> &#8211; Observation vector</li>
+<li><strong>f</strong> &#8211; Point forecast vector</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Zero-Adjusted absolute percent error (ZAPE)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="pybats.loss_functions.scaledMSE">
