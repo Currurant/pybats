@@ -174,9 +174,9 @@
 
 <span class="sd">    .. math:: ZAPE(y, f) = \\frac{1}{n} \sum_{i=1:n} I(y_i = 0) * f_i + I(y_i = 1) * |y_i-f_i| / y_i</span>
 
-<span class="sd">    The zero-adjusted absolute percent error is an similar to the MAPE, but sets the loss equal to :math:`f_i` when :math:`y_i=0`, to avoid division by 0.</span>
+<span class="sd">    The zero-adjusted absolute percent error is an similar to absolute percent error (APE), but sets the loss equal to :math:`f_i` when :math:`y_i=0`, to avoid division by 0.</span>
 
-<span class="sd">    The optimal point forecast for ZAPE requires a simple numerical optimization, and lies between the median and (-1)-median.</span>
+<span class="sd">    Finding the optimal point forecast for ZAPE requires a simple numerical optimization, and lies between the median and (-1)-median.</span>
 
 <span class="sd">    .. code::</span>
 
@@ -185,7 +185,7 @@
 
 <span class="sd">    :param y: Observation vector</span>
 <span class="sd">    :param f: Point forecast vector</span>
-<span class="sd">    :return: Zero-Adjusted absolute percent error (ZAPE)</span>
+<span class="sd">    :return: The mean Zero-Adjusted absolute percent error (ZAPE)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>

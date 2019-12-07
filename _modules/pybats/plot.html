@@ -58,6 +58,21 @@
 
 <span class="c1"># Plot Data vs Forecast (with credible intervals)</span>
 <div class="viewcode-block" id="plot_data_forecast"><a class="viewcode-back" href="../../pybats.html#pybats.plot.plot_data_forecast">[docs]</a><span class="k">def</span> <span class="nf">plot_data_forecast</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">dates</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">linecolor</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">credible_interval</span><span class="o">=</span><span class="mi">95</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot observations along with sequential forecasts and credible intervals.</span>
+
+<span class="sd">    :param fig: Figure to plot on (initialized from matplotlib)</span>
+<span class="sd">    :param ax: Axes to plot on (initialized from matplotlib)</span>
+<span class="sd">    :param y: Observations</span>
+<span class="sd">    :param f: Point forecast, e.g. median(samples)</span>
+<span class="sd">    :param samples: Samples from the forecast distribution (often returned from the analysis function)</span>
+<span class="sd">    :param dates: Dates</span>
+<span class="sd">    :param linewidth: Line width of the point forecast</span>
+<span class="sd">    :param linecolor: Line color of the point forecast</span>
+<span class="sd">    :param credible_interval: Size of credible interval to plot</span>
+<span class="sd">    :param kwargs: Additional arguments to set axis style</span>
+<span class="sd">    :return: The axes (ax)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">linecolor</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">)</span>
@@ -75,32 +90,55 @@
     <span class="k">return</span> <span class="n">ax</span></div>
 
 <div class="viewcode-block" id="plot_coef"><a class="viewcode-back" href="../../pybats.html#pybats.plot.plot_coef">[docs]</a><span class="k">def</span> <span class="nf">plot_coef</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">coef</span><span class="p">,</span> <span class="n">dates</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">linecolor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">legend_inside_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">coef_samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot coefficients over time.</span>
+
+<span class="sd">    :param fig: Figure to plot on (initialized from matplotlib)</span>
+<span class="sd">    :param ax: Axes to plot on (initialized from matplotlib)</span>
+<span class="sd">    :param coef: Matrix of coefficient mean values</span>
+<span class="sd">    :param dates: Dates</span>
+<span class="sd">    :param linewidth: Line width of the coefficient means</span>
+<span class="sd">    :param linecolor: Line color of the coefficient means</span>
+<span class="sd">    :param legend_inside_plot: Boolean. Put legend inside or outside of the plot?</span>
+<span class="sd">    :param coef_samples: (optional) Samples from the distribution of the coefficient, to plot 95% credible intervals</span>
+<span class="sd">    :param kwargs: dditional arguments to set axis style</span>
+<span class="sd">    :return: The axes (ax)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">linecolor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">coef</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">linecolor</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">coef</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">)</span>
+
+    <span class="c1"># If dates are actually dates, then format the dates on the x-axis</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dates</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="n">datetime</span><span class="p">,</span> <span class="n">date</span><span class="p">)):</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">autofmt_xdate</span><span class="p">()</span>
+
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">ax_style</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">legend_inside_plot</span><span class="o">=</span><span class="n">legend_inside_plot</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># Add credible intervals if samples are provided</span>
+    <span class="k">if</span> <span class="n">coef_samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">coef_samples</span><span class="p">,</span> <span class="p">[</span><span class="mf">97.5</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">lower</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">coef_samples</span><span class="p">,</span> <span class="p">[</span><span class="mf">2.5</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=.</span><span class="mi">3</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">linecolor</span><span class="p">)</span>
 
 
-        <span class="k">if</span> <span class="n">linecolor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">coef</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">linecolor</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">coef</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">)</span>
+    <span class="c1"># Include the y-axis labels on all subplots, which is not the matplotlib default</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">labelleft</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-        <span class="c1"># If dates are actually dates, then format the dates on the x-axis</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dates</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="n">datetime</span><span class="p">,</span> <span class="n">date</span><span class="p">)):</span>
-            <span class="n">fig</span><span class="o">.</span><span class="n">autofmt_xdate</span><span class="p">()</span>
-
-        <span class="n">ax</span> <span class="o">=</span> <span class="n">ax_style</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">legend_inside_plot</span><span class="o">=</span><span class="n">legend_inside_plot</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-        <span class="c1"># Add credible intervals if samples are provided</span>
-        <span class="k">if</span> <span class="n">coef_samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">coef_samples</span><span class="p">,</span> <span class="p">[</span><span class="mf">97.5</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">lower</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">coef_samples</span><span class="p">,</span> <span class="p">[</span><span class="mf">2.5</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=.</span><span class="mi">3</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">linecolor</span><span class="p">)</span>
-
-
-        <span class="c1"># Include the y-axis labels on all subplots, which is not the matplotlib default</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">labelleft</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">ax</span></div>
+    <span class="k">return</span> <span class="n">ax</span></div>
 
 <div class="viewcode-block" id="plot_corr"><a class="viewcode-back" href="../../pybats.html#pybats.plot.plot_corr">[docs]</a><span class="k">def</span> <span class="nf">plot_corr</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">corr</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot a correlation matrix with a heatmap.</span>
+
+<span class="sd">    :param fig: Figure to plot on (initialized from matplotlib)</span>
+<span class="sd">    :param ax: Axes to plot on (initialized from matplotlib)</span>
+<span class="sd">    :param corr: Correlation matrix</span>
+<span class="sd">    :param labels: Labels for each entry in the correlation matrix</span>
+<span class="sd">    :return: The axes (ax)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">ax</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">corr</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                        <span class="n">cmap</span><span class="o">=</span><span class="n">sns</span><span class="o">.</span><span class="n">diverging_palette</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">240</span><span class="p">,</span> <span class="n">as_cmap</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
                        <span class="n">cbar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -113,6 +151,21 @@
 
 <div class="viewcode-block" id="ax_style"><a class="viewcode-back" href="../../pybats.html#pybats.plot.ax_style">[docs]</a><span class="k">def</span> <span class="nf">ax_style</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">legend</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">legend_inside_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">topborder</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">rightborder</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A helper function to define many elements of axis style at once.</span>
+
+<span class="sd">    :param ax: Axes to plot on (initialized from matplotlib)</span>
+<span class="sd">    :param ylim: Limits for the y-axis (a list)</span>
+<span class="sd">    :param xlim: Limits for the x-axis (a list)</span>
+<span class="sd">    :param xlabel: Label for the x-axis</span>
+<span class="sd">    :param ylabel: Label for the y-axis</span>
+<span class="sd">    :param title: Title for the plot</span>
+<span class="sd">    :param legend: Legend for the plot</span>
+<span class="sd">    :param legend_inside_plot: Boolean. Put legend inside or outside of the plot?</span>
+<span class="sd">    :param topborder: Boolean. Include the top border?</span>
+<span class="sd">    :param rightborder: Boolean. Include the right border?</span>
+<span class="sd">    :return: The axes (ax)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">legend</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">legend_inside_plot</span><span class="p">:</span>
